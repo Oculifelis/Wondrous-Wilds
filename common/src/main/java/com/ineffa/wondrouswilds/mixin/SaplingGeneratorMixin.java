@@ -9,7 +9,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +24,7 @@ public class SaplingGeneratorMixin {
      */
     // 1.21: growTree stores the mega tree key first, so the normal tree key is the second ResourceKey local.
     @ModifyVariable(method = "growTree", at = @At("STORE"), ordinal = 1)
-    private @Nullable ResourceKey<ConfiguredFeature<?, ?>> generateAutumnBirches(@Nullable ResourceKey<ConfiguredFeature<?, ?>> key, ServerLevel world, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random) {
+    private @Nullable ResourceKey<Feature> generateAutumnBirches(@Nullable ResourceKey<Feature> key, ServerLevel world, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random) {
         boolean bees = key == WondrousWildsFeatures.Trees.FANCY_BIRCH_WITH_BEES_CONFIGURED;
         if (bees || key == WondrousWildsFeatures.Trees.FANCY_BIRCH_CONFIGURED) {
             if (world.getBiome(pos).is(Biomes.OLD_GROWTH_BIRCH_FOREST)) {

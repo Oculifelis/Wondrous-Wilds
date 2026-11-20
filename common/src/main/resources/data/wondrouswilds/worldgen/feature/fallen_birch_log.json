@@ -1,0 +1,8 @@
+{
+  "type": "wondrouswilds:fallen_log",
+  "log_provider": {
+    "id": "wondrouswilds:hollow_dead_birch_log"
+  },
+  "min_length": 3,
+  "max_length": 8
+}

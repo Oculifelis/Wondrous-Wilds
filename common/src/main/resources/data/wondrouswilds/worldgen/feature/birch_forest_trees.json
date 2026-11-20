@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:random_selector",
+  "features": [
+    {
+      "feature": "wondrouswilds:fancy_birch",
+      "chance": 0.85
+    },
+    {
+      "feature": "wondrouswilds:fancy_birch_with_woodpeckers",
+      "chance": 0.1
+    },
+    {
+      "feature": "wondrouswilds:fancy_birch_with_bees",
+      "chance": 0.075
+    }
+  ],
+  "default": "minecraft:birch_checked"
+}

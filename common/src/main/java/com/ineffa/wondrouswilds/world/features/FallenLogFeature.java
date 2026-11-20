@@ -1,35 +1,39 @@
 package com.ineffa.wondrouswilds.world.features;
 
-import com.ineffa.wondrouswilds.world.features.configs.FallenLogFeatureConfig;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
 
-public class FallenLogFeature extends Feature<FallenLogFeatureConfig> {
+public record FallenLogFeature(Holder<BlockStateProvider> logProvider, int minLength, int maxLength) implements Feature {
     private static final BlockState MOSS_CARPET_STATE = Blocks.MOSS_CARPET.defaultBlockState();
 
-    public FallenLogFeature() {
-        super(FallenLogFeatureConfig.CODEC);
+    public static final MapCodec<FallenLogFeature> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            BlockStateProvider.CODEC.fieldOf("log_provider").forGetter(FallenLogFeature::logProvider),
+            Codec.INT.fieldOf("min_length").orElse(3).forGetter(FallenLogFeature::minLength),
+            Codec.INT.fieldOf("max_length").orElse(8).forGetter(FallenLogFeature::maxLength)
+    ).apply(instance, FallenLogFeature::new));
+
+    @Override
+    public MapCodec<FallenLogFeature> codec() {
+        return CODEC;
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<FallenLogFeatureConfig> context) {
-        RandomSource random = context.random();
-        WorldGenLevel world = context.level();
-        BlockPos origin = context.origin();
-        FallenLogFeatureConfig config = context.config();
-        int minLength = config.minLength;
-        int maxLength = config.maxLength;
+    public boolean place(WorldGenLevel world, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
 
         Set<BlockPos> logs = new HashSet<>();
 
@@ -45,7 +49,7 @@ public class FallenLogFeature extends Feature<FallenLogFeatureConfig> {
 
             if (!oneDirectional) nextOffsetDirection = nextOffsetDirection.getOpposite();
 
-            if (!TreeFeature.validTreePos(world, tryLogPos) || !(world.isStateAtPosition(tryLogPos.below(), BlockBehaviour.BlockStateBase::isSolidRender))) {
+            if (!TreeFeature.validTreePos(world, tryLogPos) || !(world.isStateAtPosition(tryLogPos.below(), BlockState::isSolidRender))) {
                 if (oneDirectional) break;
 
                 oneDirectional = true;
@@ -61,7 +65,7 @@ public class FallenLogFeature extends Feature<FallenLogFeatureConfig> {
         if (logs.size() < minLength) return false;
 
         for (BlockPos pos : logs) {
-            BlockState state = config.logProvider.getState(world, random, pos);
+            BlockState state = this.logProvider.value().getState(world, random, pos);
             if (state.getBlock() instanceof RotatedPillarBlock) state = state.setValue(RotatedPillarBlock.AXIS, nextOffsetDirection.getAxis());
 
             this.setBlock(world, pos, state);

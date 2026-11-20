@@ -22,7 +22,7 @@ public final class WoodpeckerDrillPacket {
 
         Minecraft client = Minecraft.getInstance();
         client.execute(() -> {
-            for (int i = 0; i < 10; ++i) if (client.level != null) client.level.addBreakingBlockEffect(drillPos, drillSide);
+            for (int i = 0; i < 10; ++i) if (client.level != null) client.level.addBreakingBlockEffects(drillPos, drillSide, false);
         });
     }
 }

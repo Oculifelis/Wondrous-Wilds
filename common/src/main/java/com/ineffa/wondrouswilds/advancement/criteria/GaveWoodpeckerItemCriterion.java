@@ -2,7 +2,8 @@ package com.ineffa.wondrouswilds.advancement.criteria;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.advancements.predicates.entity.EntityPredicate;
 import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
@@ -23,10 +24,10 @@ public class GaveWoodpeckerItemCriterion extends SimpleCriterionTrigger<GaveWood
         this.trigger(player, conditions -> conditions.matches(stack));
     }
 
-    public record Conditions(Optional<ContextAwarePredicate> player, Optional<ItemPredicate> item) implements SimpleCriterionTrigger.SimpleInstance {
+    public record Conditions(Optional<Holder<LootItemCondition>> player, Optional<ItemPredicate> item) implements SimpleCriterionTrigger.SimpleInstance {
 
         public static final Codec<Conditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(Conditions::player),
+                LootItemCondition.CODEC.optionalFieldOf("player").forGetter(Conditions::player),
                 ItemPredicate.CODEC.optionalFieldOf("item").forGetter(Conditions::item)
         ).apply(instance, Conditions::new));
 

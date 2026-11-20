@@ -12,7 +12,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
@@ -32,7 +32,7 @@ public class FancyBirchFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(WorldGenLevel world, FoliagePlacer.FoliageSetter replacer, RandomSource random, TreeConfiguration config, int trunkHeight, FoliageAttachment treeNode, int foliageHeight, int radius, int offset) {
+    protected void createFoliage(WorldGenLevel world, FoliagePlacer.FoliageSetter replacer, RandomSource random, TreeFeature config, int trunkHeight, FoliageAttachment treeNode, int foliageHeight, int radius, int offset) {
         BlockPos origin = treeNode.pos();
         BlockPos.MutableBlockPos currentCenter = origin.mutable();
 
@@ -94,7 +94,7 @@ public class FancyBirchFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    public int foliageHeight(RandomSource random, int trunkHeight, TreeConfiguration config) {
+    public int foliageHeight(RandomSource random, int trunkHeight, TreeFeature config) {
         return 0;
     }
 

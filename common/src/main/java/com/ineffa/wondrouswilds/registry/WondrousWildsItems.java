@@ -1,5 +1,8 @@
 package com.ineffa.wondrouswilds.registry;
 
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
+
 import com.ineffa.wondrouswilds.items.LovifierItem;
 import com.ineffa.wondrouswilds.items.ScrollOfSecretsItem;
 import com.ineffa.wondrouswilds.items.recipes.ShapedSecretRecipe;
@@ -15,7 +18,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ComposterBlock;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import net.minecraft.resources.ResourceKey;
 import java.util.ArrayList;
@@ -27,17 +29,17 @@ public class WondrousWildsItems {
     /** Every item, in the order the original's item group listed them. */
     private static final List<Item> TAB_ITEMS = new ArrayList<>();
 
-    public static final BlockItem PURPLE_VIOLET = registerBlockItem(WondrousWildsBlocks.PURPLE_VIOLET);
-    public static final BlockItem PINK_VIOLET = registerBlockItem(WondrousWildsBlocks.PINK_VIOLET);
-    public static final BlockItem RED_VIOLET = registerBlockItem(WondrousWildsBlocks.RED_VIOLET);
-    public static final BlockItem WHITE_VIOLET = registerBlockItem(WondrousWildsBlocks.WHITE_VIOLET);
+    public static final BlockItem PURPLE_VIOLET = registerBlockItem(WondrousWildsBlocks.PURPLE_VIOLET, ContextIntProviders.COMPOSTABLE_MEDIUM);
+    public static final BlockItem PINK_VIOLET = registerBlockItem(WondrousWildsBlocks.PINK_VIOLET, ContextIntProviders.COMPOSTABLE_MEDIUM);
+    public static final BlockItem RED_VIOLET = registerBlockItem(WondrousWildsBlocks.RED_VIOLET, ContextIntProviders.COMPOSTABLE_MEDIUM);
+    public static final BlockItem WHITE_VIOLET = registerBlockItem(WondrousWildsBlocks.WHITE_VIOLET, ContextIntProviders.COMPOSTABLE_MEDIUM);
 
-    public static final BlockItem SMALL_POLYPORE = registerBlockItem(WondrousWildsBlocks.SMALL_POLYPORE);
-    public static final BlockItem BIG_POLYPORE = registerBlockItem(WondrousWildsBlocks.BIG_POLYPORE);
+    public static final BlockItem SMALL_POLYPORE = registerBlockItem(WondrousWildsBlocks.SMALL_POLYPORE, ContextIntProviders.COMPOSTABLE_LOW);
+    public static final BlockItem BIG_POLYPORE = registerBlockItem(WondrousWildsBlocks.BIG_POLYPORE, ContextIntProviders.COMPOSTABLE_MEDIUM);
 
-    public static final BlockItem YELLOW_BIRCH_LEAVES = registerBlockItem(WondrousWildsBlocks.YELLOW_BIRCH_LEAVES);
-    public static final BlockItem ORANGE_BIRCH_LEAVES = registerBlockItem(WondrousWildsBlocks.ORANGE_BIRCH_LEAVES);
-    public static final BlockItem RED_BIRCH_LEAVES = registerBlockItem(WondrousWildsBlocks.RED_BIRCH_LEAVES);
+    public static final BlockItem YELLOW_BIRCH_LEAVES = registerBlockItem(WondrousWildsBlocks.YELLOW_BIRCH_LEAVES, ContextIntProviders.COMPOSTABLE_LOW);
+    public static final BlockItem ORANGE_BIRCH_LEAVES = registerBlockItem(WondrousWildsBlocks.ORANGE_BIRCH_LEAVES, ContextIntProviders.COMPOSTABLE_LOW);
+    public static final BlockItem RED_BIRCH_LEAVES = registerBlockItem(WondrousWildsBlocks.RED_BIRCH_LEAVES, ContextIntProviders.COMPOSTABLE_LOW);
 
     public static final BlockItem DEAD_OAK_LOG = registerBlockItem(WondrousWildsBlocks.DEAD_OAK_LOG);
     public static final BlockItem DEAD_SPRUCE_LOG = registerBlockItem(WondrousWildsBlocks.DEAD_SPRUCE_LOG);
@@ -124,31 +126,24 @@ public class WondrousWildsItems {
         return (BlockItem) registerItem(WondrousWildsRegistration.nameOf(block), p -> new BlockItem(block, p), new Item.Properties().useBlockDescriptionPrefix());
     }
 
+    // Composting chances live on the item in 26.3; the original's 0.65 and 0.3 match MEDIUM and LOW.
+    private static BlockItem registerBlockItem(Block block, ResourceKey<ContextIntProvider> compost) {
+        return (BlockItem) registerItem(WondrousWildsRegistration.nameOf(block), p -> new BlockItem(block, p), new Item.Properties().useBlockDescriptionPrefix().compostable(compost));
+    }
+
     private static ScrollOfSecretsItem registerScrollOfSecretsItem(String name, Item... itemsToUnlock) {
         return (ScrollOfSecretsItem) registerItem(name, p -> new ScrollOfSecretsItem(p, itemsToUnlock), new Item.Properties().stacksTo(1));
     }
 
     public static void initialize() {
-        addCompostable(0.65F, PURPLE_VIOLET);
-        addCompostable(0.65F, PINK_VIOLET);
-        addCompostable(0.65F, RED_VIOLET);
-        addCompostable(0.65F, WHITE_VIOLET);
 
-        addCompostable(0.3F, SMALL_POLYPORE);
-        addCompostable(0.65F, BIG_POLYPORE);
 
-        addCompostable(0.3F, YELLOW_BIRCH_LEAVES);
-        addCompostable(0.3F, ORANGE_BIRCH_LEAVES);
-        addCompostable(0.3F, RED_BIRCH_LEAVES);
 
         // Wandering trader offers are datapack files: data/wondrouswilds/villager_trade/wandering_trader.
 
         RecipeSerializers.initialize();
     }
 
-    private static void addCompostable(float chance, ItemLike item) {
-        ComposterBlock.COMPOSTABLES.put(item.asItem(), chance);
-    }
 
     public static final class RecipeSerializers {
         public static final RecipeSerializer<ShapedSecretRecipe> SECRET_SHAPED = registerRecipeSerializer("crafting_shaped_secret", new RecipeSerializer<>(ShapedSecretRecipe.CODEC, ShapedSecretRecipe.STREAM_CODEC));

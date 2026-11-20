@@ -22,16 +22,11 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("deprecation")
 public class TreeHollowBlock extends InhabitableNestBlock {
 
-    public static final com.mojang.serialization.MapCodec<TreeHollowBlock> CODEC = simpleCodec(TreeHollowBlock::new);
 
     public TreeHollowBlock(Properties settings) {
         super(settings);
     }
 
-    @Override
-    protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.BaseEntityBlock> codec() {
-        return CODEC;
-    }
 
     @Nullable
     @Override

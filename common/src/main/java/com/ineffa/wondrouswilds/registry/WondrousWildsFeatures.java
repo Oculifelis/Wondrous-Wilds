@@ -3,8 +3,7 @@ package com.ineffa.wondrouswilds.registry;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.world.features.FallenLogFeature;
 import com.ineffa.wondrouswilds.world.features.VioletPatchFeature;
-import com.ineffa.wondrouswilds.world.features.configs.FallenLogFeatureConfig;
-import com.ineffa.wondrouswilds.world.features.configs.VioletPatchFeatureConfig;
+import com.mojang.serialization.MapCodec;
 import com.ineffa.wondrouswilds.world.features.trees.decorators.CobwebTreeDecorator;
 import com.ineffa.wondrouswilds.world.features.trees.decorators.HangingBeeNestTreeDecorator;
 import com.ineffa.wondrouswilds.world.features.trees.decorators.PolyporeTreeDecorator;
@@ -13,7 +12,6 @@ import com.ineffa.wondrouswilds.world.features.trees.foliage.FancyBirchFoliagePl
 import com.ineffa.wondrouswilds.world.features.trees.trunks.StraightBranchingTrunkPlacer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
@@ -55,21 +53,21 @@ public class WondrousWildsFeatures {
             }
         }
 
-        public static final ResourceKey<ConfiguredFeature<?, ?>> FANCY_BIRCH_CONFIGURED = configured("fancy_birch");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("fancy_birch_with_bees");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> YELLOW_FANCY_BIRCH_CONFIGURED = configured("yellow_fancy_birch");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> YELLOW_FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("yellow_fancy_birch_with_bees");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> ORANGE_FANCY_BIRCH_CONFIGURED = configured("orange_fancy_birch");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> ORANGE_FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("orange_fancy_birch_with_bees");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> RED_FANCY_BIRCH_CONFIGURED = configured("red_fancy_birch");
-        public static final ResourceKey<ConfiguredFeature<?, ?>> RED_FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("red_fancy_birch_with_bees");
+        public static final ResourceKey<Feature> FANCY_BIRCH_CONFIGURED = configured("fancy_birch");
+        public static final ResourceKey<Feature> FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("fancy_birch_with_bees");
+        public static final ResourceKey<Feature> YELLOW_FANCY_BIRCH_CONFIGURED = configured("yellow_fancy_birch");
+        public static final ResourceKey<Feature> YELLOW_FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("yellow_fancy_birch_with_bees");
+        public static final ResourceKey<Feature> ORANGE_FANCY_BIRCH_CONFIGURED = configured("orange_fancy_birch");
+        public static final ResourceKey<Feature> ORANGE_FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("orange_fancy_birch_with_bees");
+        public static final ResourceKey<Feature> RED_FANCY_BIRCH_CONFIGURED = configured("red_fancy_birch");
+        public static final ResourceKey<Feature> RED_FANCY_BIRCH_WITH_BEES_CONFIGURED = configured("red_fancy_birch_with_bees");
 
         public static final ResourceKey<PlacedFeature> BIRCH_FOREST_TREES_PLACED = placed("birch_forest_trees");
         public static final ResourceKey<PlacedFeature> OLD_GROWTH_BIRCH_FOREST_TREES_PLACED = placed("old_growth_birch_forest_trees");
     }
 
-    public static final Feature<FallenLogFeatureConfig> FALLEN_LOG = WondrousWildsRegistration.add(Registries.FEATURE, "fallen_log", new FallenLogFeature());
-    public static final Feature<VioletPatchFeatureConfig> VIOLET_PATCH = WondrousWildsRegistration.add(Registries.FEATURE, "violet_patch", new VioletPatchFeature());
+    public static final MapCodec<FallenLogFeature> FALLEN_LOG = WondrousWildsRegistration.add(Registries.FEATURE_TYPE, "fallen_log", FallenLogFeature.CODEC);
+    public static final MapCodec<VioletPatchFeature> VIOLET_PATCH = WondrousWildsRegistration.add(Registries.FEATURE_TYPE, "violet_patch", VioletPatchFeature.CODEC);
 
     public static final ResourceKey<PlacedFeature> FALLEN_BIRCH_LOG_PLACED = placed("fallen_birch_log");
     public static final ResourceKey<PlacedFeature> LILY_OF_THE_VALLEY_PATCH_PLACED = placed("lily_of_the_valley_patch");
@@ -83,8 +81,8 @@ public class WondrousWildsFeatures {
     public static final ResourceKey<PlacedFeature> BIRCH_FOREST_TALL_GRASS_PATCH_PLACED = placed("birch_forest_tall_grass_patch");
     public static final ResourceKey<PlacedFeature> BIRCH_FOREST_ROCK_PLACED = placed("birch_forest_rock");
 
-    private static ResourceKey<ConfiguredFeature<?, ?>> configured(String name) {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, WondrousWilds.id(name));
+    private static ResourceKey<Feature> configured(String name) {
+        return ResourceKey.create(Registries.FEATURE, WondrousWilds.id(name));
     }
 
     private static ResourceKey<PlacedFeature> placed(String name) {

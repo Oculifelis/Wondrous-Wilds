@@ -24,7 +24,7 @@ public class WoodpeckerFakePlayer extends FakePlayerEntity {
 
         this.copyPosition(woodpecker);
 
-        this.setInvulnerable(woodpecker.isInvulnerable());
+        this.setPermanentlyInvulnerable(woodpecker.isInvulnerable());
     }
 
     @Override
@@ -67,15 +67,16 @@ public class WoodpeckerFakePlayer extends FakePlayerEntity {
 
     @Nullable
     @Override
-    public ItemEntity drop(ItemStack stack, boolean throwRandomly, boolean retainOwnership) {
+    public ItemEntity drop(ItemStack stack, boolean throwRandomly, net.minecraft.util.Prediction prediction) {
         if (stack.isEmpty()) return null;
 
-        if (this.woodpecker.level().isClientSide()) this.woodpecker.swing(InteractionHand.MAIN_HAND);
+        if (this.woodpecker.level().isClientSide()) this.woodpecker.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
 
         ItemEntity itemEntity = new ItemEntity(this.woodpecker.level(), this.woodpecker.getX(), this.woodpecker.getEyeY() - 0.3D, this.woodpecker.getZ(), stack);
         itemEntity.setPickUpDelay(40);
 
-        if (retainOwnership) itemEntity.setThrower(this.woodpecker);
+        // 26.3 drops no longer say whether the thrower is kept, so it always is, as vanilla players do.
+        itemEntity.setThrower(this.woodpecker);
 
         if (throwRandomly) {
             float f = this.woodpecker.getRandom().nextFloat() * 0.5F;

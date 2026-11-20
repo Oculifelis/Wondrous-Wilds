@@ -7,6 +7,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
@@ -21,12 +22,12 @@ public record FireflySpawnsModifier(HolderSet<Biome> biomes) implements BiomeMod
     ).apply(instance, FireflySpawnsModifier::new));
 
     @Override
-    public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+    public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD || !this.biomes.contains(biome)) return;
         if (!WondrousWilds.config.mobSettings.firefliesSpawnNaturally) return;
 
-        builder.getMobSpawnSettings().addSpawn(MobCategory.WATER_AMBIENT, WondrousWildsEntities.FIREFLY_SPAWN_WEIGHT,
-                new MobSpawnSettings.SpawnerData(WondrousWildsEntities.FIREFLY, WondrousWildsEntities.FIREFLY_SPAWN_MIN, WondrousWildsEntities.FIREFLY_SPAWN_MAX));
+        builder.getMobSpawnSettings().addSpawn(WondrousWildsEntities.FIREFLY, MobCategory.WATER_AMBIENT, WondrousWildsEntities.FIREFLY_SPAWN_WEIGHT,
+                net.minecraft.util.valueproviders.UniformInt.of(WondrousWildsEntities.FIREFLY_SPAWN_MIN, WondrousWildsEntities.FIREFLY_SPAWN_MAX));
     }
 
     @Override

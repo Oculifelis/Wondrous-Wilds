@@ -23,12 +23,10 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -43,7 +41,6 @@ public class WondrousWildsNeoForge {
         modBus.addListener(this::onPayloads);
 
         NeoForge.EVENT_BUS.addListener(this::onEntityJoin);
-        NeoForge.EVENT_BUS.addListener(this::onToolModification);
 
         if (FMLEnvironment.getDist().isClient()) {
             WondrousWildsNeoForgeClient.init(modBus);
@@ -89,12 +86,4 @@ public class WondrousWildsNeoForge {
             WondrousWilds.hookEntityCreation(event.getEntity());
     }
 
-    private void onToolModification(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getItemAbility() != ItemAbilities.AXE_STRIP) return;
-
-        BlockState state = event.getState();
-        Block stripped = WondrousWildsBlocks.HOLLOW_STRIPPABLES.get(state.getBlock());
-        if (stripped != null)
-            event.setFinalState(stripped.withPropertiesOf(state));
-    }
 }

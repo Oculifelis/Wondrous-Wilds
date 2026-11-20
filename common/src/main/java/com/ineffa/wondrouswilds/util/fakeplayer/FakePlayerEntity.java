@@ -41,9 +41,6 @@ public class FakePlayerEntity extends Player {
     protected void onBelowWorld() {}
 
     @Override
-    protected void updateSwingTime() {}
-
-    @Override
     protected void pushEntities() {}
 
     @Override

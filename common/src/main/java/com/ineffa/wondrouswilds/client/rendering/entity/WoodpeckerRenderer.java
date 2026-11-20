@@ -37,7 +37,7 @@ public class WoodpeckerRenderer extends GeoEntityRenderer<WoodpeckerEntity, Livi
 
             @Override
             protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStackRenderState stackState, ItemDisplayContext displayContext, LivingEntityRenderState renderState, SubmitNodeCollector renderTasks, int packedLight) {
-                poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+                poseStack.rotate(Axis.XP.rotationDegrees(-90.0F));
                 poseStack.translate(0.0D, 0.0D, -0.035D);
                 poseStack.scale(0.5F, 0.5F, 0.5F);
 

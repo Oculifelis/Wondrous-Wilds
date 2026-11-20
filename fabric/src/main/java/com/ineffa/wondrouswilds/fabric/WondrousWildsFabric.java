@@ -19,7 +19,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -59,7 +59,8 @@ public class WondrousWildsFabric implements ModInitializer {
             BiomeModifications.addSpawn(context -> context.hasTag(ConventionalBiomeTags.IS_OVERWORLD), MobCategory.WATER_AMBIENT, WondrousWildsEntities.FIREFLY,
                     WondrousWildsEntities.FIREFLY_SPAWN_WEIGHT, WondrousWildsEntities.FIREFLY_SPAWN_MIN, WondrousWildsEntities.FIREFLY_SPAWN_MAX);
 
-        WondrousWildsBlocks.HOLLOW_STRIPPABLES.forEach(StrippableBlockRegistry::register);
+        // 26.3 Fabric API has no strippable registry and vanilla stripping is one shared data file, so axes strip hollow logs here.
+        UseBlockCallback.EVENT.register(WondrousWildsFabric::stripHollowLog);
 
 
         upgradeBirchForests();
@@ -95,7 +96,7 @@ public class WondrousWildsFabric implements ModInitializer {
 
             context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WondrousWildsFeatures.LILY_OF_THE_VALLEY_PATCH_PLACED);
 
-            context.getMobSpawnSettings().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityTypes.FOX, 2, 4), 6);
+            context.getMobSpawnSettings().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityTypes.FOX, net.minecraft.util.valueproviders.UniformInt.of(2, 4)), 6);
         });
 
         birchForestModifier.add(ModificationPhase.REPLACEMENTS, BIRCH_FOREST, context -> {
@@ -109,5 +110,22 @@ public class WondrousWildsFabric implements ModInitializer {
 
             context.getEffects().setGrassColorOverride(12232267);
         });
+    }
+
+    private static net.minecraft.world.InteractionResult stripHollowLog(net.minecraft.world.entity.player.Player player, net.minecraft.world.level.Level level, net.minecraft.world.InteractionHand hand, net.minecraft.world.phys.BlockHitResult hit) {
+        net.minecraft.world.item.ItemStack stack = player.getItemInHand(hand);
+        if (player.isSpectator() || !stack.is(net.minecraft.tags.ItemTags.AXES)) return net.minecraft.world.InteractionResult.PASS;
+        net.minecraft.core.BlockPos pos = hit.getBlockPos();
+        net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+        net.minecraft.world.level.block.Block stripped = WondrousWildsBlocks.HOLLOW_STRIPPABLES.get(state.getBlock());
+        if (stripped == null) return net.minecraft.world.InteractionResult.PASS;
+        net.minecraft.world.level.block.state.BlockState newState = stripped.withPropertiesOf(state);
+        level.playSound(player, pos, net.minecraft.sounds.SoundEvents.AXE_STRIP.value(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+        if (!level.isClientSide()) {
+            level.setBlock(pos, newState, net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE);
+            level.gameEvent(net.minecraft.world.level.gameevent.GameEvent.BLOCK_CHANGE, pos, net.minecraft.world.level.gameevent.GameEvent.Context.of(player, newState));
+            stack.hurtAndBreak(1, player, hand);
+        }
+        return net.minecraft.world.InteractionResult.SUCCESS;
     }
 }

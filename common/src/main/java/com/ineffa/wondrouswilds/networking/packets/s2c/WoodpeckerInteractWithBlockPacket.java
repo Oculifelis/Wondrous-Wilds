@@ -19,13 +19,13 @@ public final class WoodpeckerInteractWithBlockPacket {
 
     public static void write(FriendlyByteBuf buf, int entityId, BlockHitResult hitResult, boolean useItem) {
         buf.writeVarInt(entityId);
-        buf.writeBlockHitResult(hitResult);
+        BlockHitResult.STREAM_CODEC.encode(buf, hitResult);
         buf.writeBoolean(useItem);
     }
 
     public static void receive(FriendlyByteBuf buf) {
         int entityId = buf.readVarInt();
-        BlockHitResult hitResult = buf.readBlockHitResult();
+        BlockHitResult hitResult = BlockHitResult.STREAM_CODEC.decode(buf);
         boolean useItem = buf.readBoolean();
 
         Minecraft client = Minecraft.getInstance();

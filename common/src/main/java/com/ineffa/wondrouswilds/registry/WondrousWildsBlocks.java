@@ -21,17 +21,17 @@ import java.util.function.Function;
 
 public class WondrousWildsBlocks {
 
-    public static final Block PURPLE_VIOLET = registerBlock("purple_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY));
-    public static final Block PINK_VIOLET = registerBlock("pink_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY));
-    public static final Block RED_VIOLET = registerBlock("red_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY));
-    public static final Block WHITE_VIOLET = registerBlock("white_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY));
-    public static final Block POTTED_PURPLE_VIOLET = registerBlock("potted_purple_violet", p -> new FlowerPotBlock(PURPLE_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.DESTROY).instabreak().noOcclusion());
-    public static final Block POTTED_PINK_VIOLET = registerBlock("potted_pink_violet", p -> new FlowerPotBlock(PINK_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.DESTROY).instabreak().noOcclusion());
-    public static final Block POTTED_RED_VIOLET = registerBlock("potted_red_violet", p -> new FlowerPotBlock(RED_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.DESTROY).instabreak().noOcclusion());
-    public static final Block POTTED_WHITE_VIOLET = registerBlock("potted_white_violet", p -> new FlowerPotBlock(WHITE_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.DESTROY).instabreak().noOcclusion());
+    public static final Block PURPLE_VIOLET = registerBlock("purple_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.POPPED));
+    public static final Block PINK_VIOLET = registerBlock("pink_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.POPPED));
+    public static final Block RED_VIOLET = registerBlock("red_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.POPPED));
+    public static final Block WHITE_VIOLET = registerBlock("white_violet", VioletBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.POPPED));
+    public static final Block POTTED_PURPLE_VIOLET = registerBlock("potted_purple_violet", p -> new FlowerPotBlock(PURPLE_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.POPPED).instabreak().noOcclusion());
+    public static final Block POTTED_PINK_VIOLET = registerBlock("potted_pink_violet", p -> new FlowerPotBlock(PINK_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.POPPED).instabreak().noOcclusion());
+    public static final Block POTTED_RED_VIOLET = registerBlock("potted_red_violet", p -> new FlowerPotBlock(RED_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.POPPED).instabreak().noOcclusion());
+    public static final Block POTTED_WHITE_VIOLET = registerBlock("potted_white_violet", p -> new FlowerPotBlock(WHITE_VIOLET, p), BlockBehaviour.Properties.of().pushReaction(PushReaction.POPPED).instabreak().noOcclusion());
 
-    public static final Block SMALL_POLYPORE = registerBlock("small_polypore", SmallPolyporeBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).pushReaction(PushReaction.DESTROY).sound(SoundType.GRASS).noOcclusion().instabreak().noCollision());
-    public static final Block BIG_POLYPORE = registerBlock("big_polypore", BigPolyporeBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).pushReaction(PushReaction.DESTROY).sound(SoundType.GRASS).noOcclusion().instabreak());
+    public static final Block SMALL_POLYPORE = registerBlock("small_polypore", SmallPolyporeBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).pushReaction(PushReaction.POPPED).sound(SoundType.GRASS).noOcclusion().instabreak().noCollision());
+    public static final Block BIG_POLYPORE = registerBlock("big_polypore", BigPolyporeBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).pushReaction(PushReaction.POPPED).sound(SoundType.GRASS).noOcclusion().instabreak());
 
     public static final Block YELLOW_BIRCH_LEAVES = registerBlock("yellow_birch_leaves", p -> new TintedParticleLeavesBlock(0.01F, p), BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_LEAVES));
     public static final Block ORANGE_BIRCH_LEAVES = registerBlock("orange_birch_leaves", p -> new TintedParticleLeavesBlock(0.01F, p), BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_LEAVES));

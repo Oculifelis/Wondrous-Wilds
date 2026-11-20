@@ -4,6 +4,8 @@ import com.ineffa.wondrouswilds.blocks.entity.InhabitableNestBlockEntity;
 import com.ineffa.wondrouswilds.blocks.entity.TreeHollowBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -51,7 +53,7 @@ public abstract class InhabitableNestBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
+    public void playerDestroy(ServerLevel world, ServerPlayer player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
         super.playerDestroy(world, player, pos, state, blockEntity, stack);
 
         if (!world.isClientSide() && blockEntity instanceof InhabitableNestBlockEntity nest) {
