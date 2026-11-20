@@ -7,9 +7,7 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:stripped_jungle_log"
-    }
+    "#": "minecraft:stripped_jungle_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_stripped_jungle_log",

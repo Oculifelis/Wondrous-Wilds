@@ -6,9 +6,7 @@
     "LL"
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_oak_log"
-    }
+    "L": "wondrouswilds:dead_oak_log"
   },
   "result": {
     "id": "wondrouswilds:dead_oak_wood",

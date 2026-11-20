@@ -7,9 +7,7 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:stripped_oak_log"
-    }
+    "#": "minecraft:stripped_oak_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_stripped_oak_log",

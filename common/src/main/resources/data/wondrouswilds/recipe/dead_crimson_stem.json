@@ -7,12 +7,8 @@
     "LLL"
   ],
   "key": {
-    "L": {
-      "item": "minecraft:crimson_stem"
-    },
-    "W": {
-      "item": "minecraft:wither_rose"
-    }
+    "L": "minecraft:crimson_stem",
+    "W": "minecraft:wither_rose"
   },
   "result": {
     "id": "wondrouswilds:dead_crimson_stem",

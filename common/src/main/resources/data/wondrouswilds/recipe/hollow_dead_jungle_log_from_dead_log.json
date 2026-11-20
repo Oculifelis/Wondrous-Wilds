@@ -7,9 +7,7 @@
     " L "
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_jungle_log"
-    }
+    "L": "wondrouswilds:dead_jungle_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_jungle_log",
