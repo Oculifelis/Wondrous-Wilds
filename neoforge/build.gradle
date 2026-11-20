@@ -34,7 +34,7 @@ neoForge {
 }
 
 dependencies {
-    implementation "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_neoforge_version}"
+    implementation "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 }
 
