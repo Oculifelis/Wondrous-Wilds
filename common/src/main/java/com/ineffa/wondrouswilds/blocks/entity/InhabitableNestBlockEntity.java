@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.blocks.entity;
 
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.ineffa.wondrouswilds.blocks.InhabitableNestBlock;
 import com.ineffa.wondrouswilds.entities.FlyingAndWalkingAnimalEntity;
@@ -225,7 +226,7 @@ public interface InhabitableNestBlockEntity {
 
         if (!hasSpaceToRelease && releaseState != InhabitantReleaseState.EMERGENCY) return false;
 
-        Mob inhabitantEntity = (Mob) EntityType.loadEntityRecursive(nbtCompound, world, EntitySpawnReason.LOAD, e -> e);
+        Mob inhabitantEntity = (Mob) EntityType.loadEntityRecursive(nbtCompound, world, new EntitySpawnRequest(EntitySpawnReason.LOAD, false), e -> e);
         if (inhabitantEntity != null) {
             double d0 = !hasSpaceToRelease ? 0.0D : 0.55D + (double) (inhabitantEntity.getBbWidth() / 2.0F);
             double d1 = (double) nestPos.getX() + 0.5D + d0 * (double) frontDirection.getStepX();
