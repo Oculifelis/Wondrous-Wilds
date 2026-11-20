@@ -31,8 +31,6 @@ public class FakePlayerEntity extends Player {
     @Override
     protected void processPortalCooldown() {}
 
-    @Override
-    protected void handleNetherPortal() {}
 
     @Override
     protected void updateUsingItem(ItemStack stack) {}

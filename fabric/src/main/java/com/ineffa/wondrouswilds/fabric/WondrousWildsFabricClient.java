@@ -4,8 +4,10 @@ import com.ineffa.wondrouswilds.client.WondrousWildsClient;
 import com.ineffa.wondrouswilds.client.rendering.WondrousWildsColorProviders;
 import com.ineffa.wondrouswilds.client.rendering.entity.FireflyRenderer;
 import com.ineffa.wondrouswilds.client.rendering.entity.WoodpeckerRenderer;
-import com.ineffa.wondrouswilds.client.screen.WondrousWildsScreens;
-import com.ineffa.wondrouswilds.networking.WondrousWildsNetwork;
+import com.ineffa.wondrouswilds.client.screen.ingame.NestBoxScreen;
+import com.ineffa.wondrouswilds.registry.WondrousWildsScreenHandlers;
+import net.minecraft.client.gui.screens.MenuScreens;
+import com.ineffa.wondrouswilds.networking.WondrousWildsPayload;
 import com.ineffa.wondrouswilds.registry.WondrousWildsEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -29,9 +31,8 @@ public class WondrousWildsFabricClient implements ClientModInitializer {
             ColorProviderRegistry.ITEM.register((stack, tintIndex) -> color, block.asItem());
         });
 
-        WondrousWildsScreens.register();
+        MenuScreens.register(WondrousWildsScreenHandlers.NEST_BOX, NestBoxScreen::new);
 
-        for (String id : WondrousWildsNetwork.S2C_PACKETS)
-            ClientPlayNetworking.registerGlobalReceiver(WondrousWildsNetwork.createChannelId(id), (client, handler, buf, sender) -> WondrousWildsNetwork.handleClient(id, buf));
+        ClientPlayNetworking.registerGlobalReceiver(WondrousWildsPayload.TYPE, (payload, context) -> payload.handleClient());
     }
 }

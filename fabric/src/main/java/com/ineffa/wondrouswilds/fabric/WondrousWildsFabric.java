@@ -1,6 +1,8 @@
 package com.ineffa.wondrouswilds.fabric;
 
 import com.ineffa.wondrouswilds.WondrousWilds;
+import com.ineffa.wondrouswilds.networking.WondrousWildsPayload;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import com.ineffa.wondrouswilds.entities.FireflyEntity;
 import com.ineffa.wondrouswilds.entities.WoodpeckerEntity;
 import com.ineffa.wondrouswilds.registry.WondrousWildsBlocks;
@@ -18,12 +20,13 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.biome.Biomes;
@@ -40,6 +43,8 @@ public class WondrousWildsFabric implements ModInitializer {
     public void onInitialize() {
         WondrousWilds.init();
 
+        PayloadTypeRegistry.playS2C().register(WondrousWildsPayload.TYPE, WondrousWildsPayload.CODEC);
+
         for (WondrousWildsRegistration.Entry entry : WondrousWildsRegistration.entries()) {
             Registry registry = BuiltInRegistries.REGISTRY.get(entry.registry().location());
             Registry.register(registry, entry.id(), entry.value());
@@ -47,11 +52,11 @@ public class WondrousWildsFabric implements ModInitializer {
 
         FabricDefaultAttributeRegistry.register(WondrousWildsEntities.FIREFLY, FireflyEntity.createFireflyAttributes());
         FabricDefaultAttributeRegistry.register(WondrousWildsEntities.WOODPECKER, WoodpeckerEntity.createWoodpeckerAttributes());
-        SpawnPlacements.register(WondrousWildsEntities.FIREFLY, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, FireflyEntity::canFireflySpawn);
-        SpawnPlacements.register(WondrousWildsEntities.WOODPECKER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Animal::checkAnimalSpawnRules);
+        SpawnPlacements.register(WondrousWildsEntities.FIREFLY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, FireflyEntity::canFireflySpawn);
+        SpawnPlacements.register(WondrousWildsEntities.WOODPECKER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Animal::checkAnimalSpawnRules);
 
         if (WondrousWilds.config.mobSettings.firefliesSpawnNaturally)
-            BiomeModifications.addSpawn(context -> context.hasTag(ConventionalBiomeTags.IN_OVERWORLD), MobCategory.WATER_AMBIENT, WondrousWildsEntities.FIREFLY,
+            BiomeModifications.addSpawn(context -> context.hasTag(ConventionalBiomeTags.IS_OVERWORLD), MobCategory.WATER_AMBIENT, WondrousWildsEntities.FIREFLY,
                     WondrousWildsEntities.FIREFLY_SPAWN_WEIGHT, WondrousWildsEntities.FIREFLY_SPAWN_MIN, WondrousWildsEntities.FIREFLY_SPAWN_MAX);
 
         WondrousWildsBlocks.HOLLOW_STRIPPABLES.forEach(StrippableBlockRegistry::register);

@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.world.features.trees.decorators;
 
+import com.mojang.serialization.MapCodec;
 import com.ineffa.wondrouswilds.blocks.BigPolyporeBlock;
 import com.ineffa.wondrouswilds.blocks.SmallPolyporeBlock;
 import com.ineffa.wondrouswilds.registry.WondrousWildsBlocks;
@@ -24,7 +25,7 @@ import static com.ineffa.wondrouswilds.util.WondrousWildsUtils.HORIZONTAL_DIRECT
 public class PolyporeTreeDecorator extends TreeDecorator {
 
     public static final PolyporeTreeDecorator INSTANCE = new PolyporeTreeDecorator();
-    public static final Codec<PolyporeTreeDecorator> CODEC = Codec.unit(() -> INSTANCE);
+    public static final MapCodec<PolyporeTreeDecorator> CODEC = MapCodec.unit(() -> INSTANCE);
 
     private static final BlockState SMALL_POLYPORE_STATE = WondrousWildsBlocks.SMALL_POLYPORE.defaultBlockState();
     private static final BlockState BIG_POLYPORE_STATE = WondrousWildsBlocks.BIG_POLYPORE.defaultBlockState();

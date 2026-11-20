@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class NestBoxScreen extends AbstractContainerScreen<NestBoxScreenHandler> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(WondrousWilds.MOD_ID, "textures/gui/container/nest_box.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "textures/gui/container/nest_box.png");
 
     public NestBoxScreen(NestBoxScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
@@ -25,8 +25,7 @@ public class NestBoxScreen extends AbstractContainerScreen<NestBoxScreenHandler>
 
     @Override
     public void render(GuiGraphics matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
-
+        // 1.20.2+: Screen#render draws the background itself; drawing it again here would blur twice.
         super.render(matrices, mouseX, mouseY, delta);
 
         this.renderTooltip(matrices, mouseX, mouseY);

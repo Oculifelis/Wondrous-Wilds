@@ -42,7 +42,7 @@ public final class WoodpeckerInteractWithBlockPacket {
                 ItemStack heldItem = woodpecker.getMainHandItem();
                 if (!heldItem.isEmpty()) heldItem.useOn(new WoodpeckerItemUsageContext(woodpecker, fakePlayer, heldItem, hitResult));
             }
-            else world.getBlockState(hitResult.getBlockPos()).use(world, fakePlayer, InteractionHand.MAIN_HAND, hitResult);
+            else WoodpeckerEntity.useBlockAsFakePlayer(world.getBlockState(hitResult.getBlockPos()), world, fakePlayer, hitResult);
         });
     }
 }

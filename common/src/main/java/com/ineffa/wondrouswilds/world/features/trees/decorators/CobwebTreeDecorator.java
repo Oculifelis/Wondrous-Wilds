@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.world.features.trees.decorators;
 
+import com.mojang.serialization.MapCodec;
 import com.ineffa.wondrouswilds.registry.WondrousWildsFeatures;
 import com.mojang.serialization.Codec;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import static com.ineffa.wondrouswilds.util.WondrousWildsUtils.HORIZONTAL_DIRECT
 public class CobwebTreeDecorator extends TreeDecorator {
 
     public static final CobwebTreeDecorator INSTANCE = new CobwebTreeDecorator();
-    public static final Codec<CobwebTreeDecorator> CODEC = Codec.unit(() -> INSTANCE);
+    public static final MapCodec<CobwebTreeDecorator> CODEC = MapCodec.unit(() -> INSTANCE);
 
     @Override
     protected TreeDecoratorType<?> type() {

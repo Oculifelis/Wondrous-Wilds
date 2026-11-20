@@ -72,7 +72,7 @@ public class WoodpeckerFakePlayer extends FakePlayerEntity {
         ItemEntity itemEntity = new ItemEntity(this.woodpecker.level(), this.woodpecker.getX(), this.woodpecker.getEyeY() - 0.3D, this.woodpecker.getZ(), stack);
         itemEntity.setPickUpDelay(40);
 
-        if (retainOwnership) itemEntity.setThrower(this.woodpecker.getUUID());
+        if (retainOwnership) itemEntity.setThrower(this.woodpecker);
 
         if (throwRandomly) {
             float f = this.woodpecker.getRandom().nextFloat() * 0.5F;

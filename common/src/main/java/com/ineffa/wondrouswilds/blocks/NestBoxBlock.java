@@ -42,14 +42,11 @@ public abstract class NestBoxBlock extends InhabitableNestBlock {
         return world.isClientSide() ? null : createTickerHelper(type, WondrousWildsBlocks.BlockEntities.NEST_BOX, NestBoxBlockEntity::serverTick);
     }
 
-    @Override
-    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomHoverName() && world.getBlockEntity(pos) instanceof NestBoxBlockEntity nestBox)
-            nestBox.setCustomName(itemStack.getHoverName());
-    }
+    // 1.21: the container block entity copies the item's custom name component on placement by itself,
+    // so the original's setPlacedBy name copy is gone.
 
     @Override
-    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide() && player.isCreative() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && world.getBlockEntity(pos) instanceof NestBoxBlockEntity nestBox) {
             ItemStack itemStack = new ItemStack(this);
             if (nestBox.hasInhabitants()) {
@@ -58,7 +55,7 @@ public abstract class NestBoxBlock extends InhabitableNestBlock {
                 nbtCompound.put(NestBoxBlockEntity.INHABITANTS_KEY, nestBox.getInhabitantsNbt());
                 BlockItem.setBlockEntityData(itemStack, WondrousWildsBlocks.BlockEntities.NEST_BOX, nbtCompound);
 
-                itemStack.addTagElement("BlockStateTag", nbtCompound);
+                // 1.21: the original also copied this tag into BlockStateTag, which held no block properties and did nothing. Item block state is a property map now, so that copy is gone.
 
                 ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
                 itemEntity.setDefaultPickUpDelay();
@@ -66,7 +63,7 @@ public abstract class NestBoxBlock extends InhabitableNestBlock {
             }
         }
 
-        super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override
@@ -82,7 +79,7 @@ public abstract class NestBoxBlock extends InhabitableNestBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (world.isClientSide()) return InteractionResult.SUCCESS;
 
         if (world.getBlockEntity(pos) instanceof NestBoxBlockEntity nestBox) player.openMenu(nestBox);

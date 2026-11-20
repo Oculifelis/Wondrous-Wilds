@@ -34,10 +34,10 @@
   ],
   "accessWidener": "${mod_id}.accesswidener",
   "depends": {
-    "fabricloader": ">=0.14",
+    "fabricloader": ">=0.16",
     "fabric-api": "*",
     "minecraft": "${minecraft_version}",
-    "java": ">=17",
+    "java": ">=21",
     "geckolib": ">=${geckolib_version}",
     "cloth-config": "*"
   },

@@ -14,16 +14,12 @@ import net.minecraft.world.level.Level;
 public class LovifierItem extends Item {
 
     public LovifierItem(Properties settings) {
-        super(settings);
+        // 1.21: rarity is an item component now, set here instead of a getRarity override.
+        super(settings.rarity(Rarity.EPIC));
     }
 
     @Override
-    public Rarity getRarity(ItemStack stack) {
-        return Rarity.EPIC;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(ItemStack stack, TooltipContext world, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, world, tooltip, context);
 
         tooltip.add(Component.translatable(this.getDescriptionId() + ".desc").withStyle(ChatFormatting.GRAY));

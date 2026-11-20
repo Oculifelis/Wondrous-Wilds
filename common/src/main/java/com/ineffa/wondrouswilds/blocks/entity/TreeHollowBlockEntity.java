@@ -43,15 +43,15 @@ public class TreeHollowBlockEntity extends BlockEntity implements InhabitableNes
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
 
         nbt.put(INHABITANTS_KEY, this.getInhabitantsNbt());
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
 
         this.getInhabitants().clear();
 

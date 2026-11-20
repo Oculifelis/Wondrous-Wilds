@@ -53,17 +53,17 @@ public class NestBoxBlockEntity extends RandomizableContainerBlockEntity impleme
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
 
         nbt.put(INHABITANTS_KEY, this.getInhabitantsNbt());
 
-        if (!this.trySaveLootTable(nbt)) ContainerHelper.saveAllItems(nbt, this.inventory);
+        if (!this.trySaveLootTable(nbt)) ContainerHelper.saveAllItems(nbt, this.inventory, registries);
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
 
         this.getInhabitants().clear();
 
@@ -75,7 +75,7 @@ public class NestBoxBlockEntity extends RandomizableContainerBlockEntity impleme
             this.getInhabitants().add(inhabitant);
         }
 
-        if (!this.tryLoadLootTable(nbt)) ContainerHelper.loadAllItems(nbt, this.inventory);
+        if (!this.tryLoadLootTable(nbt)) ContainerHelper.loadAllItems(nbt, this.inventory, registries);
     }
 
     @Override

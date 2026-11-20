@@ -217,7 +217,7 @@ public interface InhabitableNestBlockEntity {
             if (inhabitantEntity instanceof Animal) ageInhabitant(inhabitant.ticksInNest, (Animal) inhabitantEntity);
 
             if (inhabitant.isFresh) {
-                if (world instanceof ServerLevelAccessor serverWorldAccess) inhabitantEntity.finalizeSpawn(serverWorldAccess, serverWorldAccess.getCurrentDifficultyAt(inhabitantEntity.blockPosition()), MobSpawnType.CHUNK_GENERATION, null, nbtCompound);
+                if (world instanceof ServerLevelAccessor serverWorldAccess) inhabitantEntity.finalizeSpawn(serverWorldAccess, serverWorldAccess.getCurrentDifficultyAt(inhabitantEntity.blockPosition()), MobSpawnType.CHUNK_GENERATION, null);
 
                 if (inhabitantEntity instanceof FlyingAndWalkingAnimalEntity flyingEntity) flyingEntity.setFlying(true);
             }

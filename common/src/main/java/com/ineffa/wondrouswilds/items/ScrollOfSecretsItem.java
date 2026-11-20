@@ -15,7 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
@@ -29,7 +29,8 @@ public class ScrollOfSecretsItem extends Item {
     protected final Map<Item, ResourceLocation> itemIds = new HashMap<>();
 
     public ScrollOfSecretsItem(Properties settings, Item... itemsToUnlock) {
-        super(settings);
+        // 1.21: rarity is an item component now, set here instead of a getRarity override.
+        super(settings.rarity(Rarity.RARE));
 
         for (Item item : itemsToUnlock) {
             if (!this.itemsToUnlock.add(item)) continue;
@@ -38,17 +39,12 @@ public class ScrollOfSecretsItem extends Item {
     }
 
     @Override
-    public Rarity getRarity(ItemStack stack) {
-        return Rarity.RARE;
-    }
-
-    @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
         ItemStack itemStack = user.getItemInHand(hand);
 
         if (!world.isClientSide()) {
             boolean hasAllRecipes = true;
-            ArrayList<Recipe<?>> recipesToUnlock = new ArrayList<>();
+            ArrayList<RecipeHolder<?>> recipesToUnlock = new ArrayList<>();
 
             RecipeManager recipeManager = Objects.requireNonNull(world.getServer()).getRecipeManager();
             for (Item itemToUnlock : this.itemsToUnlock) {
@@ -57,7 +53,7 @@ public class ScrollOfSecretsItem extends Item {
                 if (user instanceof ServerPlayer serverPlayer && serverPlayer.getRecipeBook().contains(itemToUnlockId)) continue;
                 else if (hasAllRecipes) hasAllRecipes = false;
 
-                Optional<? extends Recipe<?>> recipe = recipeManager.byKey(itemToUnlockId);
+                Optional<RecipeHolder<?>> recipe = recipeManager.byKey(itemToUnlockId);
                 if (recipe.isPresent()) recipesToUnlock.add(recipe.get());
 
                 else WondrousWilds.LOGGER.error("Scroll of Secrets failed to find recipe for " + itemToUnlockId.toString());
@@ -78,7 +74,7 @@ public class ScrollOfSecretsItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(ItemStack stack, TooltipContext world, List<Component> tooltip, TooltipFlag context) {
         for (Item item : this.itemsToUnlock) tooltip.add(item.getDescription().copy().withStyle(ChatFormatting.GRAY));
 
         super.appendHoverText(stack, world, tooltip, context);

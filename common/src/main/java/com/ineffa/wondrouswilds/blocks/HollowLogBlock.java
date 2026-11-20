@@ -92,7 +92,7 @@ public class HollowLogBlock extends RotatedPillarBlock implements SimpleWaterlog
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 }

@@ -1,5 +1,7 @@
 package com.ineffa.wondrouswilds.entities;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import com.ineffa.wondrouswilds.entities.ai.BetterFlyNavigation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -56,12 +58,18 @@ public abstract class FlyingAndWalkingAnimalEntity extends Animal implements Fly
         return new GroundPathNavigation(this, world);
     }
 
+    /** Quirk kept: the original never chose a breeding item, so it kept the old default (wheat). */
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    public boolean isFood(ItemStack stack) {
+        return stack.is(Items.WHEAT);
+    }
 
-        this.entityData.define(IS_FLYING, false);
-        this.entityData.define(WANTS_TO_LAND, false);
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+
+        builder.define(IS_FLYING, false);
+        builder.define(WANTS_TO_LAND, false);
     }
 
     @Override

@@ -22,8 +22,15 @@ public class BirchNestBoxBlock extends NestBoxBlock {
     private static final VoxelShape EAST_SHAPE = Shapes.or(ROOF_SHAPE, EAST_BOX_SHAPE);
     private static final VoxelShape WEST_SHAPE = Shapes.or(ROOF_SHAPE, WEST_BOX_SHAPE);
 
+    public static final com.mojang.serialization.MapCodec<BirchNestBoxBlock> CODEC = simpleCodec(BirchNestBoxBlock::new);
+
     public BirchNestBoxBlock(Properties settings) {
         super(settings);
+    }
+
+    @Override
+    protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -37,7 +44,7 @@ public class BirchNestBoxBlock extends NestBoxBlock {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 }

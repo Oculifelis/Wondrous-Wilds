@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.world.features.trees.trunks;
 
+import com.mojang.serialization.MapCodec;
 import com.google.common.collect.ImmutableList;
 import com.ineffa.wondrouswilds.registry.WondrousWildsFeatures;
 import com.mojang.serialization.Codec;
@@ -24,7 +25,7 @@ import static com.ineffa.wondrouswilds.util.WondrousWildsUtils.HORIZONTAL_DIRECT
 
 public class StraightBranchingTrunkPlacer extends TrunkPlacer {
 
-    public static final Codec<StraightBranchingTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> StraightBranchingTrunkPlacer.trunkPlacerParts(instance).and(instance.group(
+    public static final MapCodec<StraightBranchingTrunkPlacer> CODEC = RecordCodecBuilder.mapCodec(instance -> StraightBranchingTrunkPlacer.trunkPlacerParts(instance).and(instance.group(
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("min_branches").forGetter(StraightBranchingTrunkPlacer::getMinBranches),
             ExtraCodecs.POSITIVE_INT.fieldOf("max_branches").forGetter(StraightBranchingTrunkPlacer::getMaxBranches),
             ExtraCodecs.POSITIVE_INT.fieldOf("min_branch_length").forGetter(StraightBranchingTrunkPlacer::getMinBranchLength),

@@ -30,7 +30,7 @@ public class FireflyRenderer extends GeoEntityRenderer<FireflyEntity> {
     }
 
     private static class FireflyGlowLayer extends GeoRenderLayer<FireflyEntity> {
-        private static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(WondrousWilds.MOD_ID, "textures/entity/firefly/firefly_glow.png");
+        private static final ResourceLocation GLOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "textures/entity/firefly/firefly_glow.png");
 
         public FireflyGlowLayer(GeoRenderer<FireflyEntity> renderer) {
             super(renderer);
@@ -42,7 +42,7 @@ public class FireflyRenderer extends GeoEntityRenderer<FireflyEntity> {
             float ageInTicks = entity.tickCount + partialTick;
             float alpha = Mth.clamp((Mth.cos(ageInTicks * 0.1F) * 2.0F) - 1.0F, 0.0F, 1.0F);
 
-            this.getRenderer().reRender(bakedModel, poseStack, bufferSource, entity, glowType, bufferSource.getBuffer(glowType), partialTick, packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0.0F), 1.0F, 1.0F, 1.0F, alpha);
+            this.getRenderer().reRender(bakedModel, poseStack, bufferSource, entity, glowType, bufferSource.getBuffer(glowType), partialTick, packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0.0F), net.minecraft.util.FastColor.ARGB32.colorFromFloat(alpha, 1.0F, 1.0F, 1.0F));
         }
     }
 }

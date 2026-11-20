@@ -1,0 +1,17 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "minecraft:old_growth_birch_forest",
+  "features": [
+    "wondrouswilds:birch_forest_grass_patch",
+    "wondrouswilds:birch_forest_tall_flowers",
+    "wondrouswilds:old_growth_birch_forest_trees",
+    "wondrouswilds:fallen_birch_log",
+    "wondrouswilds:birch_forest_tall_grass_patch",
+    "wondrouswilds:purple_violets",
+    "wondrouswilds:pink_violets",
+    "wondrouswilds:red_violets",
+    "wondrouswilds:white_violets",
+    "wondrouswilds:lily_of_the_valley_patch"
+  ],
+  "step": "vegetal_decoration"
+}

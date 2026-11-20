@@ -1,12 +1,13 @@
 package com.ineffa.wondrouswilds.entities;
 
+import net.minecraft.world.ItemInteractionResult;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import com.ineffa.wondrouswilds.blocks.TreeHollowBlock;
 import com.ineffa.wondrouswilds.blocks.entity.InhabitableNestBlockEntity;
@@ -140,17 +141,17 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
 
-        this.entityData.define(CLING_POS, BlockPos.ZERO);
-        this.entityData.define(CLING_ANGLE, 0);
-        this.entityData.define(PECK_CHAIN_LENGTH, 0);
-        this.entityData.define(PECK_CHAIN_TICKS, 0);
-        this.entityData.define(DRUMMING_TICKS, 0);
-        this.entityData.define(ANGER_TICKS, 0);
-        this.entityData.define(CHIRP_DELAY, (byte) 0);
-        this.entityData.define(TAME, false);
+        builder.define(CLING_POS, BlockPos.ZERO);
+        builder.define(CLING_ANGLE, 0);
+        builder.define(PECK_CHAIN_LENGTH, 0);
+        builder.define(PECK_CHAIN_TICKS, 0);
+        builder.define(DRUMMING_TICKS, 0);
+        builder.define(ANGER_TICKS, 0);
+        builder.define(CHIRP_DELAY, (byte) 0);
+        builder.define(TAME, false);
     }
 
     @Override
@@ -170,10 +171,10 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
 
-        BlockPos clingPos = NbtUtils.readBlockPos(nbt.getCompound(CLING_POS_KEY));
+        BlockPos clingPos = NbtUtils.readBlockPos(nbt, CLING_POS_KEY).orElse(BlockPos.ZERO);
         if (!this.isClinging() && !WondrousWildsUtils.isPosAtWorldOrigin(clingPos)) this.tryClingingTo(clingPos);
 
-        if (nbt.contains(NEST_POS_KEY)) this.setNestPos(NbtUtils.readBlockPos(nbt.getCompound(NEST_POS_KEY)));
+        NbtUtils.readBlockPos(nbt, NEST_POS_KEY).ifPresent(this::setNestPos);
 
         this.setTame(nbt.getBoolean(TAME_KEY));
 
@@ -181,12 +182,12 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag entityNbt) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
         if (this.getPlaySessionsBeforeTame() <= 0 && !this.isTame()) this.setPlaySessionsBeforeTame(this.getRandom().nextIntBetweenInclusive(5, 15));
 
         this.populateDefaultEquipmentSlots(world.getRandom(), difficulty);
 
-        return super.finalizeSpawn(world, difficulty, spawnReason, entityData, entityNbt);
+        return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
     @Override
@@ -645,7 +646,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
                                 boolean successfulInteraction;
                                 boolean usedItem = false;
 
-                                if (!(successfulInteraction = (peckState.use(this.level(), fakePlayer, InteractionHand.MAIN_HAND, hitResult)).consumesAction())) {
+                                if (!(successfulInteraction = useBlockAsFakePlayer(peckState, this.level(), fakePlayer, hitResult))) {
                                     ItemStack heldItem = this.getMainHandItem();
                                     if (!heldItem.isEmpty() && (successfulInteraction = heldItem.useOn(new WoodpeckerItemUsageContext(this, fakePlayer, heldItem, hitResult)).consumesAction())) usedItem = true;
                                 }
@@ -890,13 +891,8 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
-        return this.isTame() && super.canBeLeashed(player);
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return dimensions.height * 0.95F;
+    public boolean canBeLeashed() {
+        return this.isTame() && super.canBeLeashed();
     }
 
     @Override
@@ -1007,5 +1003,12 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
 
             this.level().addParticle(particleEffect, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), d, e, f);
         }
+    }
+
+    /** The old single block "use" call: the held item's block interaction first, then the empty-hand one. */
+    public static boolean useBlockAsFakePlayer(BlockState state, Level level, Player player, BlockHitResult hitResult) {
+        ItemInteractionResult itemResult = state.useItemOn(player.getMainHandItem(), level, player, InteractionHand.MAIN_HAND, hitResult);
+        if (itemResult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return state.useWithoutItem(level, player, hitResult).consumesAction();
+        return itemResult.consumesAction();
     }
 }

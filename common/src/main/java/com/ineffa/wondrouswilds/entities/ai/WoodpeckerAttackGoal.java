@@ -29,7 +29,9 @@ public class WoodpeckerAttackGoal extends MeleeAttackGoal {
     }
 
     @Override
-    protected void checkAndPerformAttack(LivingEntity target, double squaredDistance) {
+    protected void checkAndPerformAttack(LivingEntity target) {
+        // 1.21 dropped Mob#getPerceivedTargetDistanceSquareForMeleeAttack; it was the plain squared distance unless the target rode a vehicle.
+        double squaredDistance = this.mob.distanceToSqr(target);
         double maxDistance = this.getAttackReachSqr(target);
         if (squaredDistance <= maxDistance) {
             if (!this.woodpecker.isPecking() && this.isTimeToAttack()) {
@@ -39,11 +41,15 @@ public class WoodpeckerAttackGoal extends MeleeAttackGoal {
             }
         }
 
-        if (this.woodpecker.isPecking() && squaredDistance <= super.getAttackReachSqr(target)) this.woodpecker.setDeltaMovement(this.woodpecker.getDeltaMovement().scale(0.9D));
+        if (this.woodpecker.isPecking() && squaredDistance <= this.getBaseAttackReachSqr(target)) this.woodpecker.setDeltaMovement(this.woodpecker.getDeltaMovement().scale(0.9D));
     }
 
-    @Override
+    /** The old melee reach formula, which newer versions replaced with a box check. */
+    private double getBaseAttackReachSqr(LivingEntity entity) {
+        return this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + entity.getBbWidth();
+    }
+
     protected double getAttackReachSqr(LivingEntity entity) {
-        return super.getAttackReachSqr(entity) * 3.0D;
+        return this.getBaseAttackReachSqr(entity) * 3.0D;
     }
 }

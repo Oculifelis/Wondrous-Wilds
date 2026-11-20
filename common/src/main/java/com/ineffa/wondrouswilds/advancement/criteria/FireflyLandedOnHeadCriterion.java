@@ -1,31 +1,21 @@
 package com.ineffa.wondrouswilds.advancement.criteria;
 
-import com.google.gson.JsonObject;
-import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.entities.FireflyEntity;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.SerializationContext;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.loot.LootContext;
 
+import java.util.Optional;
+
 public class FireflyLandedOnHeadCriterion extends SimpleCriterionTrigger<FireflyLandedOnHeadCriterion.Conditions> {
 
-    private static final ResourceLocation ID = new ResourceLocation(WondrousWilds.MOD_ID, "firefly_landed_on_head");
-
     @Override
-    protected Conditions createInstance(JsonObject obj, ContextAwarePredicate playerPredicate, DeserializationContext predicateDeserializer) {
-        ContextAwarePredicate fireflyPredicate = EntityPredicate.fromJson(obj, "firefly", predicateDeserializer);
-        return new Conditions(playerPredicate, fireflyPredicate);
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return ID;
+    public Codec<Conditions> codec() {
+        return Conditions.CODEC;
     }
 
     public void trigger(ServerPlayer player, FireflyEntity firefly) {
@@ -33,31 +23,23 @@ public class FireflyLandedOnHeadCriterion extends SimpleCriterionTrigger<Firefly
         this.trigger(player, conditions -> conditions.matches(lootContext));
     }
 
-    public static class Conditions extends AbstractCriterionTriggerInstance {
-        private final ContextAwarePredicate fireflyPredicate;
+    public record Conditions(Optional<ContextAwarePredicate> player, Optional<ContextAwarePredicate> firefly) implements SimpleCriterionTrigger.SimpleInstance {
 
-        public Conditions(ContextAwarePredicate player, ContextAwarePredicate fireflyPredicate) {
-            super(ID, player);
-            this.fireflyPredicate = fireflyPredicate;
-        }
+        public static final Codec<Conditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(Conditions::player),
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("firefly").forGetter(Conditions::firefly)
+        ).apply(instance, Conditions::new));
 
         public static Conditions any() {
-            return new Conditions(ContextAwarePredicate.ANY, ContextAwarePredicate.ANY);
+            return new Conditions(Optional.empty(), Optional.empty());
         }
 
         public static Conditions predicate(ContextAwarePredicate fireflyPredicate) {
-            return new Conditions(ContextAwarePredicate.ANY, fireflyPredicate);
+            return new Conditions(Optional.empty(), Optional.of(fireflyPredicate));
         }
 
         public boolean matches(LootContext context) {
-            return this.fireflyPredicate.matches(context);
-        }
-
-        @Override
-        public JsonObject serializeToJson(SerializationContext predicateSerializer) {
-            JsonObject jsonObject = super.serializeToJson(predicateSerializer);
-            jsonObject.add("firefly", this.fireflyPredicate.toJson(predicateSerializer));
-            return jsonObject;
+            return this.firefly.isEmpty() || this.firefly.get().matches(context);
         }
     }
 }

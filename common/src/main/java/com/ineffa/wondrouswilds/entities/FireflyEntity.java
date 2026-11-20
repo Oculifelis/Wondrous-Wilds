@@ -1,12 +1,13 @@
 package com.ineffa.wondrouswilds.entities;
 
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.entities.ai.FireflyHideGoal;
@@ -34,7 +35,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -51,7 +51,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -63,11 +63,11 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     public FireflyEntity(EntityType<? extends FireflyEntity> entityType, Level world) {
         super(entityType, world);
 
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0f);
-        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0f);
-        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0f);
-        this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0f);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0f);
+        this.setPathfindingMalus(PathType.WATER, -1.0f);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 16.0f);
+        this.setPathfindingMalus(PathType.COCOA, -1.0f);
+        this.setPathfindingMalus(PathType.FENCE, -1.0f);
 
         this.noCulling = true;
     }
@@ -108,10 +108,10 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
 
-        this.entityData.define(LAND_ON_ENTITY_COOLDOWN, 0);
+        builder.define(LAND_ON_ENTITY_COOLDOWN, 0);
     }
 
     @Override
@@ -129,10 +129,10 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag entityNbt) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
         if (this.getRandom().nextBoolean() && !this.isInFlight()) this.setFlying(true);
 
-        return super.finalizeSpawn(world, difficulty, spawnReason, entityData, entityNbt);
+        return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
     public int getLandOnEntityCooldown() {
@@ -177,15 +177,7 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
         else return false;
     }
 
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return dimensions.height * 0.7F;
-    }
-
-    @Override
-    public MobType getMobType() {
-        return MobType.ARTHROPOD;
-    }
+    // The original's ARTHROPOD mob type is the minecraft:arthropod entity tag now (data/minecraft/tags/entity_type).
 
     @Override
     public boolean removeWhenFarAway(double distanceSquared) {
@@ -220,8 +212,17 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
         }
     }
 
+    /**
+     * The original's riding offsets were tuned for the old rider formula (vehicle height * 0.75 + rider offset).
+     * Newer versions place riders at the vehicle's passenger attachment point, so the old height is rebuilt here.
+     */
     @Override
-    public double getMyRidingOffset() {
+    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+        double attach = vehicle.getPassengerRidingPosition(this).y - vehicle.getY();
+        return new Vec3(0.0D, attach - vehicle.getBbHeight() * 0.75D - this.getLegacyRidingOffset(), 0.0D);
+    }
+
+    private double getLegacyRidingOffset() {
         double offset = 0.0D;
 
         if (this.isPassenger()) {

@@ -19,8 +19,15 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("deprecation")
 public class TreeHollowBlock extends InhabitableNestBlock {
 
+    public static final com.mojang.serialization.MapCodec<TreeHollowBlock> CODEC = simpleCodec(TreeHollowBlock::new);
+
     public TreeHollowBlock(Properties settings) {
         super(settings);
+    }
+
+    @Override
+    protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Nullable
@@ -36,7 +43,7 @@ public class TreeHollowBlock extends InhabitableNestBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide() && player.isCreative() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && world.getBlockEntity(pos) instanceof TreeHollowBlockEntity treeHollow) {
             ItemStack itemStack = new ItemStack(this);
             if (treeHollow.hasInhabitants()) {
@@ -45,7 +52,7 @@ public class TreeHollowBlock extends InhabitableNestBlock {
                 nbtCompound.put(TreeHollowBlockEntity.INHABITANTS_KEY, treeHollow.getInhabitantsNbt());
                 BlockItem.setBlockEntityData(itemStack, WondrousWildsBlocks.BlockEntities.TREE_HOLLOW, nbtCompound);
 
-                itemStack.addTagElement("BlockStateTag", nbtCompound);
+                // 1.21: the original also copied this tag into BlockStateTag, which held no block properties and did nothing. Item block state is a property map now, so that copy is gone.
 
                 ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
                 itemEntity.setDefaultPickUpDelay();
@@ -53,7 +60,7 @@ public class TreeHollowBlock extends InhabitableNestBlock {
             }
         }
 
-        super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override

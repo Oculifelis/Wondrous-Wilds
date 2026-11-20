@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.world.features.trees.foliage;
 
+import com.mojang.serialization.MapCodec;
 import com.ineffa.wondrouswilds.registry.WondrousWildsFeatures;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,7 +20,7 @@ import static com.ineffa.wondrouswilds.util.WondrousWildsUtils.*;
 
 public class FancyBirchFoliagePlacer extends FoliagePlacer {
 
-    public static final Codec<FancyBirchFoliagePlacer> CODEC = RecordCodecBuilder.create(instance -> FancyBirchFoliagePlacer.foliagePlacerParts(instance).apply(instance, FancyBirchFoliagePlacer::new));
+    public static final MapCodec<FancyBirchFoliagePlacer> CODEC = RecordCodecBuilder.mapCodec(instance -> FancyBirchFoliagePlacer.foliagePlacerParts(instance).apply(instance, FancyBirchFoliagePlacer::new));
 
     public FancyBirchFoliagePlacer(IntProvider radius, IntProvider offset) {
         super(radius, offset);

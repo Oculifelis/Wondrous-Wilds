@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.world.features.trees.decorators;
 
+import com.mojang.serialization.MapCodec;
 import com.ineffa.wondrouswilds.blocks.TreeHollowBlock;
 import com.ineffa.wondrouswilds.registry.WondrousWildsBlocks;
 import com.ineffa.wondrouswilds.registry.WondrousWildsEntities;
@@ -23,7 +24,7 @@ import static com.ineffa.wondrouswilds.util.WondrousWildsUtils.TREE_HOLLOW_MAP;
 public class TreeHollowTreeDecorator extends TreeDecorator {
 
     public static final TreeHollowTreeDecorator INSTANCE = new TreeHollowTreeDecorator();
-    public static final Codec<TreeHollowTreeDecorator> CODEC = Codec.unit(() -> INSTANCE);
+    public static final MapCodec<TreeHollowTreeDecorator> CODEC = MapCodec.unit(() -> INSTANCE);
 
     @Override
     protected TreeDecoratorType<?> type() {

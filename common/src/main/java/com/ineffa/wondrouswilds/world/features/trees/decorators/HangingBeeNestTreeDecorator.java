@@ -1,5 +1,8 @@
 package com.ineffa.wondrouswilds.world.features.trees.decorators;
 
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.ineffa.wondrouswilds.registry.WondrousWildsFeatures;
 import com.mojang.serialization.Codec;
@@ -25,7 +28,7 @@ import static com.ineffa.wondrouswilds.util.WondrousWildsUtils.HORIZONTAL_DIRECT
 public class HangingBeeNestTreeDecorator extends TreeDecorator {
 
     public static final HangingBeeNestTreeDecorator INSTANCE = new HangingBeeNestTreeDecorator();
-    public static final Codec<HangingBeeNestTreeDecorator> CODEC = Codec.unit(() -> INSTANCE);
+    public static final MapCodec<HangingBeeNestTreeDecorator> CODEC = MapCodec.unit(() -> INSTANCE);
 
     @Override
     protected TreeDecoratorType<?> type() {
@@ -52,9 +55,8 @@ public class HangingBeeNestTreeDecorator extends TreeDecorator {
                 world.getBlockEntity(nestPos, BlockEntityType.BEEHIVE).ifPresent(blockEntity -> {
                     int beeCount = 2 + random.nextInt(2);
                     for (int i = 0; i < beeCount; ++i) {
-                        CompoundTag nbt = new CompoundTag();
-                        nbt.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.BEE).toString());
-                        blockEntity.storeBee(nbt, random.nextInt(599), false);
+                        // 1.21: same as vanilla's BeehiveDecorator, a bee occupant with a random time in the hive.
+                        blockEntity.storeBee(BeehiveBlockEntity.Occupant.create(random.nextInt(599)));
                     }
                 });
 
