@@ -19,6 +19,11 @@ neoForge {
         client {
             client()
             gameDirectory = this.mkdir(this.file("runs/client"))
+            if (project.hasProperty('hiddenTest')) {
+                systemProperty('hidekit.probe', mod_id)
+                systemProperty('porttest.mod', mod_id)
+                programArguments.addAll('--quickPlaySingleplayer', 'wwtest')
+            }
         }
         server {
             server()

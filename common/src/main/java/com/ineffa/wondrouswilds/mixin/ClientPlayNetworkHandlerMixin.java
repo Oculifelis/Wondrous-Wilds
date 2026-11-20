@@ -7,9 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,15 +15,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPacketListener.class)
 public class ClientPlayNetworkHandlerMixin {
 
-    @Shadow @Final
-    private Minecraft minecraft;
-
     @Inject(at = @At("TAIL"), method = "handleLogin")
+    // Port: the client field moved to ClientCommonPacketListenerImpl, so the instance is read directly.
     private void sendIncompatibilityWarning(ClientboundLoginPacket packet, CallbackInfo callback) {
-        if (WondrousWilds.config.clientSettings.showShadersWarning && this.minecraft.player != null) {
+        if (WondrousWilds.config.clientSettings.showShadersWarning && Minecraft.getInstance().player != null) {
             // Port: Oculus is the Forge build of Iris, so it gets the same warning.
             if (Services.PLATFORM.isModLoaded("iris") || Services.PLATFORM.isModLoaded("optifabric") || Services.PLATFORM.isModLoaded("oculus")) {
-                this.minecraft.player.sendSystemMessage(Component.translatable("mod." + WondrousWilds.MOD_ID + ".warning.shaders").withStyle(ChatFormatting.RED));
+                Minecraft.getInstance().player.sendSystemMessage(Component.translatable("mod." + WondrousWilds.MOD_ID + ".warning.shaders").withStyle(ChatFormatting.RED));
             }
         }
     }
