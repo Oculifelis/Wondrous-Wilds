@@ -7,9 +7,7 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:stripped_acacia_log"
-    }
+    "#": "minecraft:stripped_acacia_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_stripped_acacia_log",

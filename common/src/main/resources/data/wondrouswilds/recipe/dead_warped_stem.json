@@ -7,12 +7,8 @@
     "LLL"
   ],
   "key": {
-    "L": {
-      "item": "minecraft:warped_stem"
-    },
-    "W": {
-      "item": "minecraft:wither_rose"
-    }
+    "L": "minecraft:warped_stem",
+    "W": "minecraft:wither_rose"
   },
   "result": {
     "id": "wondrouswilds:dead_warped_stem",

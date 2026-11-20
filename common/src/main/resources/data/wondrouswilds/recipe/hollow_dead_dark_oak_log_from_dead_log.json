@@ -7,9 +7,7 @@
     " L "
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_dark_oak_log"
-    }
+    "L": "wondrouswilds:dead_dark_oak_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_dark_oak_log",

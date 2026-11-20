@@ -7,9 +7,7 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:birch_log"
-    }
+    "#": "minecraft:birch_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_birch_log",

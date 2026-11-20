@@ -7,9 +7,7 @@
     " L "
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_mangrove_log"
-    }
+    "L": "wondrouswilds:dead_mangrove_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_mangrove_log",

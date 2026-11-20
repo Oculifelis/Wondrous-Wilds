@@ -7,9 +7,7 @@
     " L "
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_warped_stem"
-    }
+    "L": "wondrouswilds:dead_warped_stem"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_warped_stem",

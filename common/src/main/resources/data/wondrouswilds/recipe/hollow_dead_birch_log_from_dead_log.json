@@ -7,9 +7,7 @@
     " L "
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_birch_log"
-    }
+    "L": "wondrouswilds:dead_birch_log"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_birch_log",
