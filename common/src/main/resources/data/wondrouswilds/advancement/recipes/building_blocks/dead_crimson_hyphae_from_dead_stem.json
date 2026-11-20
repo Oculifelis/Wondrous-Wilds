@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:dead_crimson_hyphae_from_dead_stem"
+        "recipes": "wondrouswilds:dead_crimson_hyphae_from_dead_stem"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:hollow_dead_crimson_stem_from_dead_stem"
+        "recipes": "wondrouswilds:hollow_dead_crimson_stem_from_dead_stem"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

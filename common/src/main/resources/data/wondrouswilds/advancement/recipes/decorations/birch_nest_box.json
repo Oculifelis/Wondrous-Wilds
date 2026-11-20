@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:birch_nest_box"
+        "recipes": "wondrouswilds:birch_nest_box"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

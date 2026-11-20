@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:hollow_dead_oak_log_from_wither"
+        "recipes": "wondrouswilds:hollow_dead_oak_log_from_wither"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

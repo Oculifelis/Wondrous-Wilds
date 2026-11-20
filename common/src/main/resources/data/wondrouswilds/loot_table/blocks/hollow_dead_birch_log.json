@@ -10,11 +10,9 @@
           "name": "wondrouswilds:hollow_dead_birch_log"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

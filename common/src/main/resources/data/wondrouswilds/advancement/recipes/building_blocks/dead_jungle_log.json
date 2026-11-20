@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:dead_jungle_log"
+        "recipes": "wondrouswilds:dead_jungle_log"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

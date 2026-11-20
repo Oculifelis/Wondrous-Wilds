@@ -10,11 +10,9 @@
           "name": "wondrouswilds:hollow_stripped_dark_oak_log"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

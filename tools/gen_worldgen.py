@@ -160,7 +160,7 @@ def forge_like(ns):
     write(d + "birch_forest_rock.json", {"type": f"{ns}:add_features", "biomes": ALL_BIRCH,
                                          "features": f"{M}:birch_forest_rock", "step": "local_modifications"})
     write(d + "birch_forest_foxes.json", {"type": f"{ns}:add_spawns", "biomes": ALL_BIRCH,
-                                          "spawners": {"type": "minecraft:fox", "weight": 6, "minCount": 2, "maxCount": 4}})
+                                          "spawners": {"type": "minecraft:fox", "weight": 6, "count": {"type": "minecraft:uniform", "max_inclusive": 4, "min_inclusive": 2}}})
     # Grass colour 12232267 on old growth birch forest: a biome modifier type registered by the mod.
     write(d + "old_growth_birch_forest_grass_color.json", {"type": f"{M}:grass_color",
                                                            "biomes": "minecraft:old_growth_birch_forest", "color": 12232267})

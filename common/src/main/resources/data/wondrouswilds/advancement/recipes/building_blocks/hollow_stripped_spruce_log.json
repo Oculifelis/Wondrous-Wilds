@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:hollow_stripped_spruce_log"
+        "recipes": "wondrouswilds:hollow_stripped_spruce_log"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -10,11 +10,9 @@
           "name": "wondrouswilds:dead_warped_hyphae"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

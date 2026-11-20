@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "wondrouswilds:hollow_warped_stem"
+        "recipes": "wondrouswilds:hollow_warped_stem"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
