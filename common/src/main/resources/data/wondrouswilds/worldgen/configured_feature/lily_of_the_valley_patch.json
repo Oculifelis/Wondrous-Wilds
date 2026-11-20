@@ -1,22 +1,11 @@
 {
-  "type": "minecraft:flower",
+  "type": "minecraft:simple_block",
   "config": {
-    "tries": 64,
-    "xz_spread": 6,
-    "y_spread": 2,
-    "feature": {
-      "feature": {
-        "type": "minecraft:simple_block",
-        "config": {
-          "to_place": {
-            "type": "minecraft:simple_state_provider",
-            "state": {
-              "Name": "minecraft:lily_of_the_valley"
-            }
-          }
-        }
-      },
-      "placement": []
+    "to_place": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "minecraft:lily_of_the_valley"
+      }
     }
   }
 }
