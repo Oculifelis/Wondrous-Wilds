@@ -12,6 +12,7 @@ import com.ineffa.wondrouswilds.registry.WondrousWildsEntities;
 import com.ineffa.wondrouswilds.registry.WondrousWildsItems;
 import com.ineffa.wondrouswilds.registry.WondrousWildsRegistration;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.block.Block;
@@ -47,7 +48,7 @@ public class WondrousWildsNeoForge {
         if (FMLEnvironment.getDist().isClient()) {
             WondrousWildsNeoForgeClient.init(modBus);
             container.registerExtensionPoint(IConfigScreenFactory.class,
-                    (IConfigScreenFactory) (mod, parent) -> AutoConfig.getConfigScreen(WondrousWildsConfig.class, parent).get());
+                    (IConfigScreenFactory) (mod, parent) -> AutoConfigClient.getConfigScreen(WondrousWildsConfig.class, parent).get());
         }
     }
 
