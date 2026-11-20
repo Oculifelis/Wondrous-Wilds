@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.world.features.trees.decorators;
 
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 
 import com.mojang.serialization.MapCodec;
@@ -52,7 +53,7 @@ public class HangingBeeNestTreeDecorator extends TreeDecorator {
                 Direction nestFacingDirection = Util.getRandom(!suitableFacingDirections.isEmpty() ? suitableFacingDirections.toArray(Direction[]::new) : HORIZONTAL_DIRECTIONS, random);
 
                 generator.setBlock(nestPos, Blocks.BEE_NEST.defaultBlockState().setValue(BeehiveBlock.FACING, nestFacingDirection));
-                world.getBlockEntity(nestPos, BlockEntityType.BEEHIVE).ifPresent(blockEntity -> {
+                world.getBlockEntity(nestPos, BlockEntityTypes.BEEHIVE).ifPresent(blockEntity -> {
                     int beeCount = 2 + random.nextInt(2);
                     for (int i = 0; i < beeCount; ++i) {
                         // 1.21: same as vanilla's BeehiveDecorator, a bee occupant with a random time in the hive.

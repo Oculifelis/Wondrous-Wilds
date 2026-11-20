@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.fabric;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.networking.WondrousWildsPayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -94,7 +95,7 @@ public class WondrousWildsFabric implements ModInitializer {
 
             context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WondrousWildsFeatures.LILY_OF_THE_VALLEY_PATCH_PLACED);
 
-            context.getMobSpawnSettings().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.FOX, 2, 4), 6);
+            context.getMobSpawnSettings().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityTypes.FOX, 2, 4), 6);
         });
 
         birchForestModifier.add(ModificationPhase.REPLACEMENTS, BIRCH_FOREST, context -> {

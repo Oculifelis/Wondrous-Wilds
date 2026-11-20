@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.entities;
 
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.phys.Vec3;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -229,22 +230,22 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
         if (this.isPassenger()) {
             EntityType<?> vehicleType = Objects.requireNonNull(this.getVehicle()).getType();
 
-            if (vehicleType == EntityType.ZOMBIE_VILLAGER || vehicleType == EntityType.ENDERMAN) offset = 0.6D;
-            else if (vehicleType == EntityType.PLAYER || vehicleType == EntityType.ZOMBIE || vehicleType == EntityType.SKELETON || vehicleType == EntityType.VILLAGER || vehicleType == EntityType.WANDERING_TRADER || vehicleType == EntityType.PILLAGER || vehicleType == EntityType.VINDICATOR || vehicleType == EntityType.EVOKER || vehicleType == EntityType.ILLUSIONER) offset = 0.5D;
+            if (vehicleType == EntityTypes.ZOMBIE_VILLAGER || vehicleType == EntityTypes.ENDERMAN) offset = 0.6D;
+            else if (vehicleType == EntityTypes.PLAYER || vehicleType == EntityTypes.ZOMBIE || vehicleType == EntityTypes.SKELETON || vehicleType == EntityTypes.VILLAGER || vehicleType == EntityTypes.WANDERING_TRADER || vehicleType == EntityTypes.PILLAGER || vehicleType == EntityTypes.VINDICATOR || vehicleType == EntityTypes.EVOKER || vehicleType == EntityTypes.ILLUSIONER) offset = 0.5D;
 
-            else if (vehicleType == EntityType.CREEPER || vehicleType == EntityType.SPIDER || vehicleType == EntityType.COW || vehicleType == EntityType.CHICKEN) offset = 0.3D;
-            else if (vehicleType == EntityType.SHEEP || vehicleType == EntityType.PIG) offset = 0.2D;
-            else if (vehicleType == EntityType.WITCH) offset = 1.0D;
-            else if (vehicleType == EntityType.ALLAY) offset = 0.1D;
-            else if (vehicleType == EntityType.IRON_GOLEM) offset = 0.65D;
+            else if (vehicleType == EntityTypes.CREEPER || vehicleType == EntityTypes.SPIDER || vehicleType == EntityTypes.COW || vehicleType == EntityTypes.CHICKEN) offset = 0.3D;
+            else if (vehicleType == EntityTypes.SHEEP || vehicleType == EntityTypes.PIG) offset = 0.2D;
+            else if (vehicleType == EntityTypes.WITCH) offset = 1.0D;
+            else if (vehicleType == EntityTypes.ALLAY) offset = 0.1D;
+            else if (vehicleType == EntityTypes.IRON_GOLEM) offset = 0.65D;
 
-            else if (vehicleType == EntityType.SNOW_GOLEM) {
+            else if (vehicleType == EntityTypes.SNOW_GOLEM) {
                 offset = 0.45D;
 
                 if (!((SnowGolem) this.getVehicle()).hasPumpkin()) offset -= 0.175D;
             }
 
-            else if (vehicleType == EntityType.ARMOR_STAND) {
+            else if (vehicleType == EntityTypes.ARMOR_STAND) {
                 offset = 0.4D;
 
                 if (!((ArmorStand) this.getVehicle()).getItemBySlot(EquipmentSlot.HEAD).isEmpty()) offset += 0.1D;
