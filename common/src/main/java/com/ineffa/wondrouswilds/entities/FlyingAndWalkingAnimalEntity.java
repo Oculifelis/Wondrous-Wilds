@@ -14,10 +14,9 @@ import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.level.Level;
 
-public abstract class FlyingAndWalkingAnimalEntity extends Animal implements FlyingAnimal {
+public abstract class FlyingAndWalkingAnimalEntity extends Animal {
 
     public static final String IS_FLYING_KEY = "IsFlying";
     public static final String WANTS_TO_LAND_KEY = "WantsToLand";
@@ -119,7 +118,6 @@ public abstract class FlyingAndWalkingAnimalEntity extends Animal implements Fly
         this.entityData.set(WANTS_TO_LAND, wantsToLand);
     }
 
-    @Override
     public boolean isFlying() {
         return !this.onGround();
     }
