@@ -21,6 +21,8 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorTy
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+import java.util.Objects;
+
 /**
  * Feature, trunk placer, foliage placer and decorator types. The configured and placed features the original built in
  * code are datapack JSON under data/wondrouswilds/worldgen (written by tools/gen_worldgen.py from the original values).
@@ -89,5 +91,10 @@ public class WondrousWildsFeatures {
         return ResourceKey.create(Registries.PLACED_FEATURE, WondrousWilds.id(name));
     }
 
-    public static void initialize() {}
+    /** Loads the nested holders too; their static fields register the placer and decorator types. */
+    public static void initialize() {
+        Objects.requireNonNull(Trees.TrunkPlacers.STRAIGHT_BRANCHING_TRUNK);
+        Objects.requireNonNull(Trees.FoliagePlacers.FANCY_BIRCH);
+        Objects.requireNonNull(Trees.Decorators.TREE_HOLLOW_TYPE);
+    }
 }
