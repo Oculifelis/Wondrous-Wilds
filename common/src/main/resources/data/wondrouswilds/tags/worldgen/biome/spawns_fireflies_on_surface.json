@@ -1,0 +1,10 @@
+{
+  "values": [
+    {"id": "#c:swamp", "required": false},
+    {"id": "#forge:is_swamp", "required": false},
+    {"id": "#c:jungle", "required": false},
+    "#minecraft:is_jungle",
+    "minecraft:mushroom_fields",
+    "minecraft:river"
+  ]
+}

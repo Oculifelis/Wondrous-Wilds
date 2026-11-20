@@ -1,0 +1,29 @@
+{
+  "entity.woodpecker.chirp": {
+    "subtitle": "subtitles.wondrouswilds.entity.woodpecker.chirp",
+    "sounds": [
+      "wondrouswilds:entity/woodpecker/chirp"
+    ]
+  },
+  "entity.woodpecker.drum": {
+    "subtitle": "subtitles.wondrouswilds.entity.woodpecker.drum",
+    "sounds": [
+      {
+        "name": "wondrouswilds:entity/woodpecker/drum1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "wondrouswilds:entity/woodpecker/drum2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "wondrouswilds:entity/woodpecker/drum3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "wondrouswilds:entity/woodpecker/drum4",
+        "attenuation_distance": 64
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+/AGENTS.md
+/CLAUDE.md
+/DECISIONS.md
+/PORTING.md
+build/
+.gradle/
+run/
+runs/
+*.iml
+.idea/
+out/
+.javac/
+javac.*.args

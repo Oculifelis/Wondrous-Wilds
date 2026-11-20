@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "Neffa",
+    "Oculifelis"
+  ],
+  "contributors": [
+    "LudoCrypt"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/wondrous-wilds",
+    "sources": "https://github.com/NeffaDev/Wondrous-Wilds"
+  },
+  "license": "${license}",
+  "icon": "assets/wondrouswilds/wondrous_wilds_logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ineffa.wondrouswilds.fabric.WondrousWildsFabric"
+    ],
+    "client": [
+      "com.ineffa.wondrouswilds.fabric.WondrousWildsFabricClient"
+    ],
+    "modmenu": [
+      "com.ineffa.wondrouswilds.fabric.WondrousWildsModMenu"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json"
+  ],
+  "accessWidener": "${mod_id}.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=17",
+    "geckolib": ">=${geckolib_version}",
+    "cloth-config": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
