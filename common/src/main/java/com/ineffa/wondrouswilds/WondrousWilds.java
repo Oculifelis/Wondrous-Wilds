@@ -6,10 +6,10 @@ import com.ineffa.wondrouswilds.mixin.MobEntityAccessor;
 import com.ineffa.wondrouswilds.registry.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.Fox;
+import net.minecraft.world.entity.animal.fox.Fox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +23,8 @@ public class WondrousWilds {
 
 	private static boolean initialized = false;
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	public static void init() {
@@ -54,6 +54,6 @@ public class WondrousWilds {
 	/** Called by each loader whenever an entity joins a server level. */
 	public static void hookEntityCreation(Entity entityBeingCreated) {
 		if (entityBeingCreated instanceof Fox fox)
-			((MobEntityAccessor) fox).getTargetSelector().addGoal(7, new NearestAttackableTargetGoal<>(fox, WoodpeckerEntity.class, 20, true, true, entity -> !((WoodpeckerEntity) entity).isInFlight()));
+			((MobEntityAccessor) fox).getTargetSelector().addGoal(7, new NearestAttackableTargetGoal<>(fox, WoodpeckerEntity.class, 20, true, true, (entity, level) -> !((WoodpeckerEntity) entity).isInFlight()));
 	}
 }

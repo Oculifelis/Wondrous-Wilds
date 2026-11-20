@@ -5,11 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class WoodpeckerDrillPacket {
 
-    public static final ResourceLocation ID = WondrousWildsNetwork.createChannelId(WondrousWildsNetwork.WOODPECKER_DRILL);
+    public static final Identifier ID = WondrousWildsNetwork.createChannelId(WondrousWildsNetwork.WOODPECKER_DRILL);
 
     public static void write(FriendlyByteBuf buf, BlockPos drillPos, Direction drillSide) {
         buf.writeBlockPos(drillPos);
@@ -22,7 +22,7 @@ public final class WoodpeckerDrillPacket {
 
         Minecraft client = Minecraft.getInstance();
         client.execute(() -> {
-            for (int i = 0; i < 10; ++i) client.particleEngine.crack(drillPos, drillSide);
+            for (int i = 0; i < 10; ++i) if (client.level != null) client.level.addBreakingBlockEffect(drillPos, drillSide);
         });
     }
 }

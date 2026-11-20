@@ -32,7 +32,7 @@ public class VioletPatchFeature extends Feature<VioletPatchFeatureConfig> {
             mutablePos.setWithOffset(origin, random.nextInt(horizontalSpread) - random.nextInt(horizontalSpread), random.nextInt(verticalSpread) - random.nextInt(verticalSpread), random.nextInt(horizontalSpread) - random.nextInt(horizontalSpread));
 
             if (world.isEmptyBlock(mutablePos)) {
-                BlockState violetState = config.violetProvider.getState(random, mutablePos);
+                BlockState violetState = config.violetProvider.getState(world, random, mutablePos);
 
                 if (!violetState.canSurvive(world, mutablePos)) continue;
 

@@ -1,61 +1,53 @@
 package com.ineffa.wondrouswilds.client.rendering.entity;
 
+import com.geckolib.loading.math.MolangQueries;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.GeoRenderState;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.entities.WoodpeckerEntity;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.loading.math.MathParser;
-import software.bernie.geckolib.model.GeoModel;
 
 public class WoodpeckerModel extends GeoModel<WoodpeckerEntity> {
-    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "geo/woodpecker.geo.json");
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "textures/entity/woodpecker.png");
-    private static final ResourceLocation ANIMATION = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "animations/woodpecker.animation.json");
+    private static final Identifier MODEL = WondrousWilds.id("geo/woodpecker.geo.json");
+    private static final Identifier TEXTURE = WondrousWilds.id("textures/entity/woodpecker.png");
+    private static final Identifier ANIMATION = WondrousWilds.id("animations/woodpecker.animation.json");
+
+    static {
+        MolangQueries.<Object>setActorVariable("query.head_pitch", actor -> actor.animatable() instanceof WoodpeckerEntity entity
+                ? Mth.lerp(actor.partialTick(), entity.xRotO, entity.getXRot()) : 0.0D);
+        MolangQueries.<Object>setActorVariable("query.head_yaw", actor -> {
+            if (!(actor.animatable() instanceof WoodpeckerEntity entity)) return 0.0D;
+            float delta = actor.partialTick();
+            float body = Mth.rotLerp(delta, entity.yBodyRotO, entity.getVisualRotationYInDegrees());
+            float head = Mth.rotLerp(delta, entity.yHeadRotO, entity.getYHeadRot());
+            return head - body;
+        });
+        MolangQueries.<Object>setActorVariable("query.swing", actor -> actor.animatable() instanceof WoodpeckerEntity entity
+                ? entity.walkAnimation.position(actor.partialTick()) * 0.15D : 0.0D);
+        MolangQueries.<Object>setActorVariable("query.swing_amount", actor -> {
+            if (!(actor.animatable() instanceof WoodpeckerEntity entity)) return 0.0D;
+            boolean flying = entity.isInFlight();
+            float swingAmount = entity.walkAnimation.speed(actor.partialTick());
+            float extraSwing = flying ? 0.0F : 0.5F * Mth.clamp(swingAmount * 10.0F, 0.0F, 1.0F);
+            return Mth.clamp(swingAmount + extraSwing, 0.0D, flying ? 1.0D : 1.25D);
+        });
+        MolangQueries.<Object>setActorVariable("query.flap_angle", actor -> actor.animatable() instanceof WoodpeckerEntity entity
+                ? Mth.lerp(actor.partialTick(), entity.prevFlapAngle, entity.flapAngle) : 0.0D);
+    }
 
     @Override
-    public ResourceLocation getModelResource(WoodpeckerEntity entity) {
+    public Identifier getModelResource(GeoRenderState renderState) {
         return MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureResource(WoodpeckerEntity entity) {
+    public Identifier getTextureResource(GeoRenderState renderState) {
         return TEXTURE;
     }
 
     @Override
-    public ResourceLocation getAnimationResource(WoodpeckerEntity entity) {
+    public Identifier getAnimationResource(WoodpeckerEntity entity) {
         return ANIMATION;
-    }
-
-    @Override
-    public void applyMolangQueries(AnimationState<WoodpeckerEntity> animationState, double animTime) {
-        super.applyMolangQueries(animationState, animTime);
-        WoodpeckerEntity entity = animationState.getAnimatable();
-
-
-        boolean flying = entity.isInFlight();
-
-        float delta = animationState.getPartialTick();
-
-        float headPitch = Mth.lerp(delta, entity.xRotO, entity.getXRot());
-        float f = Mth.rotLerp(delta, entity.yBodyRotO, entity.getVisualRotationYInDegrees());
-        float f1 = Mth.rotLerp(delta, entity.yHeadRotO, entity.getYHeadRot());
-        float headYaw = f1 - f;
-
-        MathParser.setVariable("query.head_pitch", () -> headPitch);
-        MathParser.setVariable("query.head_yaw", () -> headYaw);
-
-        float swing = entity.walkAnimation.position(delta);
-        float swingAmount = entity.walkAnimation.speed(delta);
-        float extraSwing = flying ? 0.0F : 0.5F * Mth.clamp(swingAmount * 10.0F, 0.0F, 1.0F);
-
-        MathParser.setVariable("query.swing", () -> swing * 0.15D);
-        MathParser.setVariable("query.swing_amount", () -> Mth.clamp(swingAmount + extraSwing, 0.0D, flying ? 1.0D : 1.25D));
-
-        float flapAngle = Mth.lerp(delta, entity.prevFlapAngle, entity.flapAngle);
-
-        MathParser.setVariable("query.flap_angle", () -> flapAngle);
     }
 }

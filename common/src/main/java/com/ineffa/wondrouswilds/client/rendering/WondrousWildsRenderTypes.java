@@ -1,26 +1,18 @@
 package com.ineffa.wondrouswilds.client.rendering;
 
-import com.ineffa.wondrouswilds.WondrousWilds;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import java.util.function.Function;
-import net.minecraft.Util;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import com.geckolib.renderer.layer.builtin.AutoGlowingGeoLayer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 
-public class WondrousWildsRenderTypes extends RenderType {
+public final class WondrousWildsRenderTypes {
 
-    public WondrousWildsRenderTypes(String name, VertexFormat vertexFormat, VertexFormat.Mode drawMode, int expectedBufferSize, boolean hasCrumbling, boolean translucent, Runnable startAction, Runnable endAction) {
-        super(name, vertexFormat, drawMode, expectedBufferSize, hasCrumbling, translucent, startAction, endAction);
-    }
+    /** Full block and sky light, as the eyes shader drew it. */
+    public static final int FULL_BRIGHT = 0xF000F0;
 
-    private static final Function<ResourceLocation, RenderType> TRANSLUCENT_GLOW = Util.memoize(texture -> {
-        RenderStateShard.TextureStateShard texture2 = new RenderStateShard.TextureStateShard(texture, false, false);
-        return RenderType.create(WondrousWilds.MOD_ID + ":translucent_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, CompositeState.builder().setShaderState(RENDERTYPE_EYES_SHADER).setTextureState(texture2).setTransparencyState(TRANSLUCENT_TRANSPARENCY).setWriteMaskState(COLOR_WRITE).createCompositeState(false));
-    });
+    private WondrousWildsRenderTypes() {}
 
-    public static RenderType getTranslucentGlow(ResourceLocation texture) {
-        return TRANSLUCENT_GLOW.apply(texture);
+    // Translucent, unlit, no depth write: the same look as the old translucent eyes-shader glow.
+    public static RenderType getTranslucentGlow(Identifier texture) {
+        return AutoGlowingGeoLayer.EmissiveRenderType.getRenderType(texture, false, false, false);
     }
 }

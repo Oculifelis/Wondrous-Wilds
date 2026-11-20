@@ -3,15 +3,17 @@
   "minVersion": "0.8",
   "package": "com.ineffa.wondrouswilds.mixin",
   "compatibilityLevel": "JAVA_21",
-  "refmap": "wondrouswilds.refmap.json",
   "mixins": [
     "BirchSaplingGeneratorMixin",
     "BlocksMixin",
     "BodyControlMixin",
     "MobEntityAccessor",
     "MobEntityMixin",
+    "NormalCraftingRecipeMixin",
     "RecipeUnlockerMixin",
-    "SaplingGeneratorMixin"
+    "SaplingGeneratorMixin",
+    "ShapedRecipeAccessor",
+    "ShapelessRecipeAccessor"
   ],
   "client": [
     "ClientPlayNetworkHandlerMixin"

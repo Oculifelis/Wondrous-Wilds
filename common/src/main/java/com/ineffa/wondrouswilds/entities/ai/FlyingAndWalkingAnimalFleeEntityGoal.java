@@ -27,12 +27,12 @@ public class FlyingAndWalkingAnimalFleeEntityGoal<T extends LivingEntity> extend
         this.slowSpeed = fleeSlowSpeed;
         this.fastSpeed = fleeFastSpeed;
 
-        this.fleeFromPredicate = TargetingConditions.forCombat().range(fleeDistance).selector(inclusionSelector);
+        this.fleeFromPredicate = TargetingConditions.forCombat().range(fleeDistance).selector((entity, level) -> inclusionSelector.test(entity));
     }
 
     @Override
     public boolean canUse() {
-        this.toAvoid = this.animal.level().getNearestEntity(this.animal.level().getEntitiesOfClass(this.avoidClass, this.animal.getBoundingBox().inflate(this.maxDist, this.maxDist, this.maxDist), livingEntity -> true), this.fleeFromPredicate, this.animal, this.animal.getX(), this.animal.getY(), this.animal.getZ());
+        this.toAvoid = getServerLevel(this.animal).getNearestEntity(this.animal.level().getEntitiesOfClass(this.avoidClass, this.animal.getBoundingBox().inflate(this.maxDist, this.maxDist, this.maxDist), livingEntity -> true), this.fleeFromPredicate, this.animal, this.animal.getX(), this.animal.getY(), this.animal.getZ());
         if (this.toAvoid == null) return false;
 
         Vec3 direction = Vec3.atCenterOf(this.toAvoid.blockPosition()).subtract(this.animal.position()).normalize().reverse();

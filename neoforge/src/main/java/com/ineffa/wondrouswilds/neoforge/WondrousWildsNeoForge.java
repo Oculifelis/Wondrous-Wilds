@@ -28,7 +28,6 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.village.WandererTradesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -43,10 +42,9 @@ public class WondrousWildsNeoForge {
         modBus.addListener(this::onPayloads);
 
         NeoForge.EVENT_BUS.addListener(this::onEntityJoin);
-        NeoForge.EVENT_BUS.addListener(this::onWandererTrades);
         NeoForge.EVENT_BUS.addListener(this::onToolModification);
 
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             WondrousWildsNeoForgeClient.init(modBus);
             container.registerExtensionPoint(IConfigScreenFactory.class,
                     (IConfigScreenFactory) (mod, parent) -> AutoConfig.getConfigScreen(WondrousWildsConfig.class, parent).get());
@@ -88,11 +86,6 @@ public class WondrousWildsNeoForge {
     private void onEntityJoin(EntityJoinLevelEvent event) {
         if (!event.getLevel().isClientSide())
             WondrousWilds.hookEntityCreation(event.getEntity());
-    }
-
-    private void onWandererTrades(WandererTradesEvent event) {
-        event.getGenericTrades().addAll(WondrousWildsItems.Trades.COMMON_WANDERER_TRADES);
-        event.getRareTrades().addAll(WondrousWildsItems.Trades.RARE_WANDERER_TRADES);
     }
 
     private void onToolModification(BlockEvent.BlockToolModificationEvent event) {

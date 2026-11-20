@@ -9,7 +9,7 @@ import com.mojang.serialization.Codec;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;

@@ -4,7 +4,7 @@ import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.networking.packets.s2c.WoodpeckerDrillPacket;
 import com.ineffa.wondrouswilds.networking.packets.s2c.WoodpeckerInteractWithBlockPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public final class WondrousWildsNetwork {
     /** Every server-to-client packet, in a fixed order (Forge uses the index as the discriminator). */
     public static final List<String> S2C_PACKETS = List.of(WOODPECKER_DRILL, WOODPECKER_INTERACT_WITH_BLOCK);
 
-    public static ResourceLocation createChannelId(String name) {
+    public static Identifier createChannelId(String name) {
         return WondrousWilds.id(name);
     }
 

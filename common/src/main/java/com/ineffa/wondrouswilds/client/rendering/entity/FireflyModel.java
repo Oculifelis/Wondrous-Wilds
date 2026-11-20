@@ -1,45 +1,47 @@
 package com.ineffa.wondrouswilds.client.rendering.entity;
 
+import com.geckolib.loading.math.MolangQueries;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.GeoRenderState;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.entities.FireflyEntity;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.loading.math.MathParser;
-import software.bernie.geckolib.model.GeoModel;
+import net.minecraft.world.entity.LivingEntity;
 
 public class FireflyModel extends GeoModel<FireflyEntity> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "textures/entity/firefly/firefly.png");
-    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "geo/firefly.geo.json");
-    private static final ResourceLocation ANIMATION = ResourceLocation.fromNamespaceAndPath(WondrousWilds.MOD_ID, "animations/firefly.animation.json");
+    private static final Identifier TEXTURE = WondrousWilds.id("textures/entity/firefly/firefly.png");
+    private static final Identifier MODEL = WondrousWilds.id("geo/firefly.geo.json");
+    private static final Identifier ANIMATION = WondrousWilds.id("animations/firefly.animation.json");
+
+    static {
+        // Molang actor variables are global, so other entities keep the stock limb swing values.
+        MolangQueries.<Object>setActorVariable(MolangQueries.LIMB_SWING, actor -> {
+            if (actor.animatable() instanceof FireflyEntity firefly)
+                return firefly.walkAnimation.position(actor.partialTick()) * 1.25D;
+            return actor.animatable() instanceof LivingEntity living ? living.walkAnimation.position(actor.partialTick()) : 0.0D;
+        });
+        MolangQueries.<Object>setActorVariable(MolangQueries.LIMB_SWING_AMOUNT, actor -> {
+            if (actor.animatable() instanceof FireflyEntity firefly) {
+                float amount = firefly.walkAnimation.speed(actor.partialTick());
+                return amount + (0.9F * Mth.clamp(amount * 10.0F, 0.0F, 1.0F));
+            }
+            return actor.animatable() instanceof LivingEntity living ? living.walkAnimation.speed(actor.partialTick()) : 0.0D;
+        });
+    }
 
     @Override
-    public ResourceLocation getModelResource(FireflyEntity entity) {
+    public Identifier getModelResource(GeoRenderState renderState) {
         return MODEL;
     }
 
     @Override
-    public ResourceLocation getAnimationResource(FireflyEntity entity) {
+    public Identifier getAnimationResource(FireflyEntity entity) {
         return ANIMATION;
     }
 
     @Override
-    public ResourceLocation getTextureResource(FireflyEntity entity) {
+    public Identifier getTextureResource(GeoRenderState renderState) {
         return TEXTURE;
-    }
-
-    @Override
-    public void applyMolangQueries(AnimationState<FireflyEntity> animationState, double animTime) {
-        super.applyMolangQueries(animationState, animTime);
-        FireflyEntity fireflyEntity = animationState.getAnimatable();
-
-
-        float delta = animationState.getPartialTick();
-        float limbSwing = fireflyEntity.walkAnimation.position(delta);
-        float limbSwingAmount = fireflyEntity.walkAnimation.speed(delta);
-
-        MathParser.setVariable("query.limb_swing", () -> limbSwing * 1.25D);
-        MathParser.setVariable("query.limb_swing_amount", () -> limbSwingAmount + (0.9F * Mth.clamp(limbSwingAmount * 10.0F, 0.0F, 1.0F)));
     }
 }

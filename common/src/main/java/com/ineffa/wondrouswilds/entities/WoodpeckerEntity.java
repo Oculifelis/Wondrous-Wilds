@@ -1,14 +1,13 @@
 package com.ineffa.wondrouswilds.entities;
 
-import net.minecraft.world.ItemInteractionResult;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.util.GeckoLibUtil;
 import com.ineffa.wondrouswilds.blocks.TreeHollowBlock;
 import com.ineffa.wondrouswilds.blocks.entity.InhabitableNestBlockEntity;
 import com.ineffa.wondrouswilds.entities.ai.*;
@@ -22,8 +21,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.EntityReference;
 import com.ineffa.wondrouswilds.networking.WondrousWildsNetwork;
 import com.ineffa.wondrouswilds.platform.IPlatformHelper;
 import com.ineffa.wondrouswilds.platform.Services;
@@ -49,7 +49,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.Pose;
@@ -62,13 +62,13 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Fox;
+import net.minecraft.world.entity.animal.fox.Fox;
 import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -79,7 +79,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import static com.ineffa.wondrouswilds.WondrousWilds.config;
@@ -109,7 +108,8 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     private static final EntityDataAccessor<Boolean> TAME = SynchedEntityData.defineId(WoodpeckerEntity.class, EntityDataSerializers.BOOLEAN);
     private static final UniformInt ANGER_TIME_RANGE = TimeUtil.rangeOfSeconds(10, 15);
     @Nullable
-    private UUID angryAt;
+    private EntityReference<LivingEntity> angryAt;
+    private long angerEndTime = NO_ANGER_END_TIME;
 
     private int consecutivePecks;
     private Direction clingSide;
@@ -129,7 +129,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
 
         this.lookControl = new WoodpeckerLookControl(this);
 
-        this.noCulling = true;
+        // noCulling is gone; WoodpeckerRenderer#affectedByCulling returns false instead.
     }
 
     public static AttributeSupplier.Builder createWoodpeckerAttributes() {
@@ -155,12 +155,12 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
 
-        nbt.put(CLING_POS_KEY, NbtUtils.writeBlockPos(this.getClingPos()));
+        nbt.store(CLING_POS_KEY, BlockPos.CODEC, this.getClingPos());
 
-        if (this.hasNestPos()) nbt.put(NEST_POS_KEY, NbtUtils.writeBlockPos(Objects.requireNonNull(this.getNestPos())));
+        if (this.hasNestPos()) nbt.store(NEST_POS_KEY, BlockPos.CODEC, Objects.requireNonNull(this.getNestPos()));
 
         nbt.putBoolean(TAME_KEY, this.isTame());
 
@@ -168,21 +168,21 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
 
-        BlockPos clingPos = NbtUtils.readBlockPos(nbt, CLING_POS_KEY).orElse(BlockPos.ZERO);
+        BlockPos clingPos = nbt.read(CLING_POS_KEY, BlockPos.CODEC).orElse(BlockPos.ZERO);
         if (!this.isClinging() && !WondrousWildsUtils.isPosAtWorldOrigin(clingPos)) this.tryClingingTo(clingPos);
 
-        NbtUtils.readBlockPos(nbt, NEST_POS_KEY).ifPresent(this::setNestPos);
+        nbt.read(NEST_POS_KEY, BlockPos.CODEC).ifPresent(this::setNestPos);
 
-        this.setTame(nbt.getBoolean(TAME_KEY));
+        this.setTame(nbt.getBooleanOr(TAME_KEY, false));
 
-        this.setPlaySessionsBeforeTame(nbt.getInt(PLAY_SESSIONS_BEFORE_TAME_KEY));
+        this.setPlaySessionsBeforeTame(nbt.getIntOr(PLAY_SESSIONS_BEFORE_TAME_KEY, 0));
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         if (this.getPlaySessionsBeforeTame() <= 0 && !this.isTame()) this.setPlaySessionsBeforeTame(this.getRandom().nextIntBetweenInclusive(5, 15));
 
         this.populateDefaultEquipmentSlots(world.getRandom(), difficulty);
@@ -315,7 +315,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     public boolean canMakeNests() {
-        return config.mobSettings.woodpeckersBuildNests && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        return config.mobSettings.woodpeckersBuildNests && this.level() instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING);
     }
 
     public boolean canMakeNestInPos(BlockPos pos) {
@@ -515,7 +515,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
 
         if (this.hasAttackTarget() || this.getLastHurtByMob() != null) return false;
 
-        return this.level().isNight() || this.level().isRaining();
+        return this.level().isDarkOutside() || this.level().isRaining();
     }
 
     @Override
@@ -534,29 +534,31 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.entityData.get(ANGER_TICKS);
+    public long getPersistentAngerEndTime() {
+        return this.angerEndTime;
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int ticks) {
-        this.entityData.set(ANGER_TICKS, ticks);
+    public void setPersistentAngerEndTime(long endTime) {
+        this.angerEndTime = endTime;
+        // Kept in sync for anything that read the old remaining-ticks value.
+        this.entityData.set(ANGER_TICKS, endTime == NO_ANGER_END_TIME ? 0 : (int) Math.max(0L, endTime - this.level().getGameTime()));
     }
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.angryAt;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID angryAt) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> angryAt) {
         this.angryAt = angryAt;
     }
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(ANGER_TIME_RANGE.sample(this.getRandom()));
+        this.setPersistentAngerEndTime(this.level().getGameTime() + ANGER_TIME_RANGE.sample(this.getRandom()));
     }
 
     public boolean canWander() {
@@ -617,7 +619,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
                             LivingEntity attackTarget = this.getTarget();
                             double distanceFromTarget = this.distanceToSqr(attackTarget.getX(), attackTarget.getY(), attackTarget.getZ());
 
-                            if (distanceFromTarget <= this.getPeckReach() + 1.0D) this.doHurtTarget(attackTarget);
+                            if (distanceFromTarget <= this.getPeckReach() + 1.0D && this.level() instanceof ServerLevel serverLevel) this.doHurtTarget(serverLevel, attackTarget);
                         }
                         else if (this.isClinging() && this.canMakeNests() && this.canMakeNestInPos(this.getClingPos()) && this.hasValidClingPos()) {
                             BlockState peckState = this.level().getBlockState(this.getClingPos());
@@ -753,7 +755,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
                 }
                 else this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
-                if (!player.addItem(stackToTransfer)) this.spawnAtLocation(stackToTransfer);
+                if (!player.addItem(stackToTransfer) && this.level() instanceof ServerLevel serverLevel) this.spawnAtLocation(serverLevel, stackToTransfer);
 
                 return InteractionResult.SUCCESS;
             }
@@ -815,10 +817,10 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.getEntity() instanceof WoodpeckerEntity) amount = 0.0F;
 
-        if (super.hurt(source, amount)) {
+        if (super.hurtServer(level, source, amount)) {
             this.resetConsecutivePecks();
 
             if (!this.isInFlight() && !this.isDrumming()) this.setFlying(true);
@@ -837,7 +839,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
             return;
         }
 
-        if (this.isEffectiveAi() || this.isControlledByLocalInstance()) {
+        if (this.isEffectiveAi() || this.isLocalInstanceAuthoritative()) {
             if (this.isInWater()) {
                 this.moveRelative(0.02F, movementInput);
                 this.move(MoverType.SELF, this.getDeltaMovement());
@@ -881,7 +883,7 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -930,37 +932,37 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<WoodpeckerEntity> constantController = new AnimationController<>(this, "constantController", 2, this::constantAnimationPredicate);
-        AnimationController<WoodpeckerEntity> overlapController = new AnimationController<>(this, "overlapController", 0, this::overlapAnimationPredicate);
-        AnimationController<WoodpeckerEntity> animationController = new AnimationController<>(this, "animationController", 2, this::animationPredicate);
+        AnimationController<WoodpeckerEntity> constantController = new AnimationController<>("constantController", 2, this::constantAnimationPredicate);
+        AnimationController<WoodpeckerEntity> overlapController = new AnimationController<>("overlapController", 0, this::overlapAnimationPredicate);
+        AnimationController<WoodpeckerEntity> animationController = new AnimationController<>("animationController", 2, this::animationPredicate);
 
         animationData.add(constantController);
         animationData.add(overlapController);
         animationData.add(animationController);
     }
 
-    private <E extends GeoEntity> PlayState constantAnimationPredicate(AnimationState<E> event) {
+    private <E extends GeoEntity> PlayState constantAnimationPredicate(AnimationTest<E> event) {
         if (this.isInFlight())
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("flyingConstant"));
+            event.setAnimation(RawAnimation.begin().thenLoop("flyingConstant"));
 
         else if (this.isClinging())
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("clingingConstant"));
+            event.setAnimation(RawAnimation.begin().thenLoop("clingingConstant"));
 
         else
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("groundedConstant"));
+            event.setAnimation(RawAnimation.begin().thenLoop("groundedConstant"));
 
         return PlayState.CONTINUE;
     }
 
-    private <E extends GeoEntity> PlayState overlapAnimationPredicate(AnimationState<E> event) {
+    private <E extends GeoEntity> PlayState overlapAnimationPredicate(AnimationTest<E> event) {
         if (this.isPecking())
-            event.getController().setAnimation(RawAnimation.begin().thenPlay(this.getPeckAnimationToPlay()));
+            event.setAnimation(RawAnimation.begin().thenPlay(this.getPeckAnimationToPlay()));
 
         else if (this.getChirpDelay() > 0 && this.getChirpDelay() <= 2)
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("chirpOverlap"));
+            event.setAnimation(RawAnimation.begin().thenLoop("chirpOverlap"));
 
         else
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("empty"));
+            event.setAnimation(RawAnimation.begin().thenLoop("empty"));
 
         return PlayState.CONTINUE;
     }
@@ -975,15 +977,15 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
         };
     }
 
-    private <E extends GeoEntity> PlayState animationPredicate(AnimationState<E> event) {
+    private <E extends GeoEntity> PlayState animationPredicate(AnimationTest<E> event) {
         if (this.isInFlight() && this.walkAnimation.speed() >= 0.9F)
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("flap"));
+            event.setAnimation(RawAnimation.begin().thenLoop("flap"));
 
         else if (this.isDrumming() && this.isClinging())
-            event.getController().setAnimation(RawAnimation.begin().thenPlay("drum"));
+            event.setAnimation(RawAnimation.begin().thenPlay("drum"));
 
         else
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("empty"));
+            event.setAnimation(RawAnimation.begin().thenLoop("empty"));
 
         return PlayState.CONTINUE;
     }
@@ -1007,8 +1009,8 @@ public class WoodpeckerEntity extends FlyingAndWalkingAnimalEntity implements Bl
 
     /** The old single block "use" call: the held item's block interaction first, then the empty-hand one. */
     public static boolean useBlockAsFakePlayer(BlockState state, Level level, Player player, BlockHitResult hitResult) {
-        ItemInteractionResult itemResult = state.useItemOn(player.getMainHandItem(), level, player, InteractionHand.MAIN_HAND, hitResult);
-        if (itemResult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return state.useWithoutItem(level, player, hitResult).consumesAction();
+        InteractionResult itemResult = state.useItemOn(player.getMainHandItem(), level, player, InteractionHand.MAIN_HAND, hitResult);
+        if (itemResult instanceof InteractionResult.TryEmptyHandInteraction) return state.useWithoutItem(level, player, hitResult).consumesAction();
         return itemResult.consumesAction();
     }
 }

@@ -6,7 +6,7 @@ import com.ineffa.wondrouswilds.util.fakeplayer.WoodpeckerFakePlayer;
 import com.ineffa.wondrouswilds.util.fakeplayer.WoodpeckerItemUsageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public final class WoodpeckerInteractWithBlockPacket {
 
-    public static final ResourceLocation ID = WondrousWildsNetwork.createChannelId(WondrousWildsNetwork.WOODPECKER_INTERACT_WITH_BLOCK);
+    public static final Identifier ID = WondrousWildsNetwork.createChannelId(WondrousWildsNetwork.WOODPECKER_INTERACT_WITH_BLOCK);
 
     public static void write(FriendlyByteBuf buf, int entityId, BlockHitResult hitResult, boolean useItem) {
         buf.writeVarInt(entityId);

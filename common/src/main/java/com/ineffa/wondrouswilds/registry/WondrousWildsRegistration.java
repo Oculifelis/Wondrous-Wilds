@@ -3,7 +3,7 @@ package com.ineffa.wondrouswilds.registry;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public final class WondrousWildsRegistration {
 
-    public record Entry(ResourceKey<? extends Registry<?>> registry, ResourceLocation id, Object value) {}
+    public record Entry(ResourceKey<? extends Registry<?>> registry, Identifier id, Object value) {}
 
     private static final List<Entry> ENTRIES = new ArrayList<>();
 

@@ -5,6 +5,8 @@ import com.ineffa.wondrouswilds.registry.WondrousWildsBlocks;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -43,25 +45,19 @@ public class TreeHollowBlockEntity extends BlockEntity implements InhabitableNes
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
-        super.saveAdditional(nbt, registries);
+    protected void saveAdditional(ValueOutput nbt) {
+        super.saveAdditional(nbt);
 
-        nbt.put(INHABITANTS_KEY, this.getInhabitantsNbt());
+        this.writeInhabitants(nbt);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
-        super.loadAdditional(nbt, registries);
+    protected void loadAdditional(ValueInput nbt) {
+        super.loadAdditional(nbt);
 
         this.getInhabitants().clear();
 
-        ListTag nbtList = nbt.getList(INHABITANTS_KEY, Tag.TAG_COMPOUND);
-        for (int i = 0; i < nbtList.size(); ++i) {
-            CompoundTag nbtCompound = nbtList.getCompound(i);
-
-            Inhabitant inhabitant = new Inhabitant(nbtCompound.getBoolean(IS_FRESH_KEY), nbtCompound.getCompound(ENTITY_DATA_KEY), nbtCompound.getInt(CAPACITY_WEIGHT_KEY), nbtCompound.getInt(MIN_OCCUPATION_TICKS_KEY), nbtCompound.getInt(TICKS_IN_NEST_KEY));
-            this.getInhabitants().add(inhabitant);
-        }
+        this.readInhabitants(nbt);
     }
 
     @Override

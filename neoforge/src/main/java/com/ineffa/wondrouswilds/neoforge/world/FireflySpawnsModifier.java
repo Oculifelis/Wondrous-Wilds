@@ -25,8 +25,8 @@ public record FireflySpawnsModifier(HolderSet<Biome> biomes) implements BiomeMod
         if (phase != Phase.ADD || !this.biomes.contains(biome)) return;
         if (!WondrousWilds.config.mobSettings.firefliesSpawnNaturally) return;
 
-        builder.getMobSpawnSettings().addSpawn(MobCategory.WATER_AMBIENT, new MobSpawnSettings.SpawnerData(WondrousWildsEntities.FIREFLY,
-                WondrousWildsEntities.FIREFLY_SPAWN_WEIGHT, WondrousWildsEntities.FIREFLY_SPAWN_MIN, WondrousWildsEntities.FIREFLY_SPAWN_MAX));
+        builder.getMobSpawnSettings().addSpawn(MobCategory.WATER_AMBIENT, WondrousWildsEntities.FIREFLY_SPAWN_WEIGHT,
+                new MobSpawnSettings.SpawnerData(WondrousWildsEntities.FIREFLY, WondrousWildsEntities.FIREFLY_SPAWN_MIN, WondrousWildsEntities.FIREFLY_SPAWN_MAX));
     }
 
     @Override

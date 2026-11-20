@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,7 +45,7 @@ public class FallenLogFeature extends Feature<FallenLogFeatureConfig> {
 
             if (!oneDirectional) nextOffsetDirection = nextOffsetDirection.getOpposite();
 
-            if (!TreeFeature.validTreePos(world, tryLogPos) || !(world.isStateAtPosition(tryLogPos.below(), state -> state.isSolidRender(world, tryLogPos.below())))) {
+            if (!TreeFeature.validTreePos(world, tryLogPos) || !(world.isStateAtPosition(tryLogPos.below(), BlockBehaviour.BlockStateBase::isSolidRender))) {
                 if (oneDirectional) break;
 
                 oneDirectional = true;
@@ -60,7 +61,7 @@ public class FallenLogFeature extends Feature<FallenLogFeatureConfig> {
         if (logs.size() < minLength) return false;
 
         for (BlockPos pos : logs) {
-            BlockState state = config.logProvider.getState(random, pos);
+            BlockState state = config.logProvider.getState(world, random, pos);
             if (state.getBlock() instanceof RotatedPillarBlock) state = state.setValue(RotatedPillarBlock.AXIS, nextOffsetDirection.getAxis());
 
             this.setBlock(world, pos, state);

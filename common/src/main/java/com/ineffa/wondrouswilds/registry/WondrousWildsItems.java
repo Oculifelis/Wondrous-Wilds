@@ -6,20 +6,20 @@ import com.ineffa.wondrouswilds.items.recipes.ShapedSecretRecipe;
 import com.ineffa.wondrouswilds.items.recipes.ShapelessSecretRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
+import com.ineffa.wondrouswilds.WondrousWilds;
+import net.minecraft.resources.ResourceKey;
 import java.util.ArrayList;
+import java.util.function.Function;
 import java.util.List;
 
 public class WondrousWildsItems {
@@ -99,14 +99,14 @@ public class WondrousWildsItems {
 
     public static final BlockItem BIRCH_NEST_BOX = registerBlockItem(WondrousWildsBlocks.BIRCH_NEST_BOX);
 
-    public static final Item WOODPECKER_CREST_FEATHER = registerItem("woodpecker_crest_feather", new Item(new Item.Properties()));
+    public static final Item WOODPECKER_CREST_FEATHER = registerItem("woodpecker_crest_feather", Item::new, new Item.Properties());
 
     //public static final ScrollOfSecretsItem SCROLL_OF_SECRETS_NEST_BOX = registerScrollOfSecretsItem("scroll_of_secrets_nest_box", BIRCH_NEST_BOX);
 
-    public static final Item FIREFLY_SPAWN_EGG = registerItem("firefly_spawn_egg", new SpawnEggItem(WondrousWildsEntities.FIREFLY, 2563094, 14876540, new Item.Properties()));
-    public static final Item WOODPECKER_SPAWN_EGG = registerItem("woodpecker_spawn_egg", new SpawnEggItem(WondrousWildsEntities.WOODPECKER, 2761271, 16740713, new Item.Properties()));
+    public static final Item FIREFLY_SPAWN_EGG = registerItem("firefly_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(WondrousWildsEntities.FIREFLY));
+    public static final Item WOODPECKER_SPAWN_EGG = registerItem("woodpecker_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(WondrousWildsEntities.WOODPECKER));
 
-    public static final Item LOVIFIER = registerItem("lovifier", new LovifierItem(new Item.Properties().stacksTo(1)));
+    public static final Item LOVIFIER = registerItem("lovifier", LovifierItem::new, new Item.Properties().stacksTo(1));
 
     public static final CreativeModeTab WONDROUS_WILDS_ITEM_GROUP = WondrousWildsRegistration.add(Registries.CREATIVE_MODE_TAB, "wondrous_wilds", CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
             .title(Component.translatable("itemGroup.wondrouswilds.wondrous_wilds"))
@@ -114,17 +114,18 @@ public class WondrousWildsItems {
             .displayItems((parameters, output) -> TAB_ITEMS.forEach(output::accept))
             .build());
 
-    private static Item registerItem(String name, Item item) {
+    private static Item registerItem(String name, Function<Item.Properties, ? extends Item> factory, Item.Properties properties) {
+        Item item = factory.apply(properties.setId(ResourceKey.create(Registries.ITEM, WondrousWilds.id(name))));
         TAB_ITEMS.add(item);
         return WondrousWildsRegistration.add(Registries.ITEM, name, item);
     }
 
     private static BlockItem registerBlockItem(Block block) {
-        return (BlockItem) registerItem(WondrousWildsRegistration.nameOf(block), new BlockItem(block, new Item.Properties()));
+        return (BlockItem) registerItem(WondrousWildsRegistration.nameOf(block), p -> new BlockItem(block, p), new Item.Properties().useBlockDescriptionPrefix());
     }
 
     private static ScrollOfSecretsItem registerScrollOfSecretsItem(String name, Item... itemsToUnlock) {
-        return (ScrollOfSecretsItem) registerItem(name, new ScrollOfSecretsItem(new Item.Properties().stacksTo(1), itemsToUnlock));
+        return (ScrollOfSecretsItem) registerItem(name, p -> new ScrollOfSecretsItem(p, itemsToUnlock), new Item.Properties().stacksTo(1));
     }
 
     public static void initialize() {
@@ -140,15 +141,7 @@ public class WondrousWildsItems {
         addCompostable(0.3F, ORANGE_BIRCH_LEAVES);
         addCompostable(0.3F, RED_BIRCH_LEAVES);
 
-        Trades.addWandererTrade(false, 16, PURPLE_VIOLET, 2, 1);
-        Trades.addWandererTrade(false, 16, PINK_VIOLET, 2, 1);
-        Trades.addWandererTrade(false, 16, RED_VIOLET, 2, 1);
-        Trades.addWandererTrade(false, 16, WHITE_VIOLET, 2, 1);
-
-        Trades.addWandererTrade(false, 12, SMALL_POLYPORE, 3, 1);
-        Trades.addWandererTrade(false, 8, BIG_POLYPORE, 1, 1);
-
-        //Trades.addWandererTrade(true, 1, SCROLL_OF_SECRETS_NEST_BOX, 1, 8, WOODPECKER_CREST_FEATHER, 10);
+        // Wandering trader offers are datapack files: data/wondrouswilds/villager_trade/wandering_trader.
 
         RecipeSerializers.initialize();
     }
@@ -157,32 +150,11 @@ public class WondrousWildsItems {
         ComposterBlock.COMPOSTABLES.put(item.asItem(), chance);
     }
 
-    public static final class Trades {
-        public static final List<VillagerTrades.ItemListing> COMMON_WANDERER_TRADES = new ArrayList<>();
-        public static final List<VillagerTrades.ItemListing> RARE_WANDERER_TRADES = new ArrayList<>();
-
-        public static void addWandererTrade(boolean rare, int maxUses, ItemLike itemToSell, int amountToSell, int emeraldCost) {
-            addWandererTrade(rare, maxUses, itemToSell, amountToSell, emeraldCost, null, 0);
-        }
-
-        public static void addWandererTrade(boolean rare, int maxUses, ItemLike itemToSell, int amountToSell, int emeraldCost, ItemLike bonusItemToBuy, int bonusItemToBuyCost) {
-            addWandererTrade(rare, maxUses, itemToSell, amountToSell, Items.EMERALD, emeraldCost, bonusItemToBuy, bonusItemToBuyCost);
-        }
-
-        public static void addWandererTrade(boolean rare, int maxUses, ItemLike itemToSell, int amountToSell, ItemLike firstItemToBuy, int firstItemToBuyCost, ItemLike secondItemToBuy, int secondItemToBuyCost) {
-            List<VillagerTrades.ItemListing> listToAddTo = rare ? RARE_WANDERER_TRADES : COMMON_WANDERER_TRADES;
-
-            listToAddTo.add((entity, random) -> new MerchantOffer(new net.minecraft.world.item.trading.ItemCost(firstItemToBuy, firstItemToBuyCost), java.util.Optional.of(new net.minecraft.world.item.trading.ItemCost(secondItemToBuy, secondItemToBuyCost)), new ItemStack(itemToSell, amountToSell), maxUses, 1, 1.0F));
-        }
-
-        // Each loader adds these lists to the wandering trader (Fabric: TradeOfferHelper level 1 / 2, Forge: WandererTradesEvent).
-    }
-
     public static final class RecipeSerializers {
-        public static final RecipeSerializer<ShapedSecretRecipe> SECRET_SHAPED = registerRecipeSerializer("crafting_shaped_secret", new ShapedSecretRecipe.Serializer());
-        public static final RecipeSerializer<ShapelessSecretRecipe> SECRET_SHAPELESS = registerRecipeSerializer("crafting_shapeless_secret", new ShapelessSecretRecipe.Serializer());
+        public static final RecipeSerializer<ShapedSecretRecipe> SECRET_SHAPED = registerRecipeSerializer("crafting_shaped_secret", new RecipeSerializer<>(ShapedSecretRecipe.CODEC, ShapedSecretRecipe.STREAM_CODEC));
+        public static final RecipeSerializer<ShapelessSecretRecipe> SECRET_SHAPELESS = registerRecipeSerializer("crafting_shapeless_secret", new RecipeSerializer<>(ShapelessSecretRecipe.CODEC, ShapelessSecretRecipe.STREAM_CODEC));
 
-        private static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String name, S serializer) {
+        private static <T extends Recipe<?>> RecipeSerializer<T> registerRecipeSerializer(String name, RecipeSerializer<T> serializer) {
             return WondrousWildsRegistration.add(Registries.RECIPE_SERIALIZER, name, serializer);
         }
 

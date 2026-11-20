@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "wondrouswilds:item/orange_birch_leaves",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1472976
+      }
+    ]
+  }
+}

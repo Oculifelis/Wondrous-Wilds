@@ -1,14 +1,14 @@
 package com.ineffa.wondrouswilds.entities;
 
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.util.GeckoLibUtil;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.entities.ai.FireflyHideGoal;
 import com.ineffa.wondrouswilds.entities.ai.FireflyLandOnEntityGoal;
@@ -17,7 +17,8 @@ import com.ineffa.wondrouswilds.entities.ai.FireflyWanderLandGoal;
 import com.ineffa.wondrouswilds.registry.WondrousWildsTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -34,7 +35,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -42,7 +43,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.SnowGolem;
+import net.minecraft.world.entity.animal.golem.SnowGolem;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -63,16 +64,16 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     public FireflyEntity(EntityType<? extends FireflyEntity> entityType, Level world) {
         super(entityType, world);
 
-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0f);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1.0f);
         this.setPathfindingMalus(PathType.WATER, -1.0f);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0f);
         this.setPathfindingMalus(PathType.COCOA, -1.0f);
         this.setPathfindingMalus(PathType.FENCE, -1.0f);
 
-        this.noCulling = true;
+        // noCulling is gone; FireflyRenderer#affectedByCulling returns false instead.
     }
 
-    public static boolean canFireflySpawn(EntityType<FireflyEntity> entityType, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos spawnAttemptPos, RandomSource random) {
+    public static boolean canFireflySpawn(EntityType<FireflyEntity> entityType, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos spawnAttemptPos, RandomSource random) {
         if (!world.getBlockState(spawnAttemptPos.below()).is(WondrousWildsTags.BlockTags.FIREFLIES_SPAWNABLE_ON) || !FireflyEntity.checkMobSpawnRules(entityType, world, spawnReason, spawnAttemptPos, random)) return false;
 
         Holder<Biome> biome = world.getBiome(spawnAttemptPos);
@@ -91,7 +92,7 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
         else if (!biome.is(WondrousWildsTags.BiomeTags.SPAWNS_FIREFLIES_ON_SURFACE)) return false;
 
         // Finally, spawn if basic surface spawning conditions are met
-        return serverWorld.isNight() && skylightLevel >= 6 && world.getBrightness(LightLayer.BLOCK, spawnAttemptPos) <= 0;
+        return serverWorld.isDarkOutside() && skylightLevel >= 6 && world.getBrightness(LightLayer.BLOCK, spawnAttemptPos) <= 0;
     }
 
     // Removes the light level restriction set by AnimalEntity
@@ -115,21 +116,21 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
 
-        this.setLandOnEntityCooldown(nbt.getInt("LandOnEntityCooldown"));
+        this.setLandOnEntityCooldown(nbt.getIntOr("LandOnEntityCooldown", 0));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
 
         nbt.putInt("LandOnEntityCooldown", this.getLandOnEntityCooldown());
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         if (this.getRandom().nextBoolean() && !this.isInFlight()) this.setFlying(true);
 
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
@@ -166,8 +167,8 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (super.hurt(source, amount)) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        if (super.hurtServer(level, source, amount)) {
             if (this.isPassenger()) this.stopRiding();
 
             else if (!this.isInFlight()) this.setFlying(true);
@@ -193,7 +194,7 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     }
 
     public boolean shouldHide() {
-        return this.level().isDay() && this.level().getBrightness(LightLayer.SKY, this.blockPosition()) >= 6;
+        return this.level().isBrightOutside() && this.level().getBrightness(LightLayer.SKY, this.blockPosition()) >= 6;
     }
 
     @Override
@@ -256,7 +257,7 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -296,25 +297,25 @@ public class FireflyEntity extends FlyingAndWalkingAnimalEntity implements GeoEn
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<FireflyEntity> molangAnimationController = new AnimationController<>(this, "molangAnimationController", 2, this::molangAnimationPredicate);
-        AnimationController<FireflyEntity> antennaMolangController = new AnimationController<>(this, "antennaMolangController", 2, this::antennaMolangPredicate);
+        AnimationController<FireflyEntity> molangAnimationController = new AnimationController<>("molangAnimationController", 2, this::molangAnimationPredicate);
+        AnimationController<FireflyEntity> antennaMolangController = new AnimationController<>("antennaMolangController", 2, this::antennaMolangPredicate);
 
         animationData.add(molangAnimationController);
         animationData.add(antennaMolangController);
     }
 
-    private <E extends GeoEntity> PlayState molangAnimationPredicate(AnimationState<E> event) {
+    private <E extends GeoEntity> PlayState molangAnimationPredicate(AnimationTest<E> event) {
         if (this.isInFlight())
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("flyingMolang"));
+            event.setAnimation(RawAnimation.begin().thenLoop("flyingMolang"));
 
         else
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("groundedMolang"));
+            event.setAnimation(RawAnimation.begin().thenLoop("groundedMolang"));
 
         return PlayState.CONTINUE;
     }
 
-    private <E extends GeoEntity> PlayState antennaMolangPredicate(AnimationState<E> event) {
-        event.getController().setAnimation(RawAnimation.begin().thenLoop("antennaeMolang"));
+    private <E extends GeoEntity> PlayState antennaMolangPredicate(AnimationTest<E> event) {
+        event.setAnimation(RawAnimation.begin().thenLoop("antennaeMolang"));
 
         return PlayState.CONTINUE;
     }

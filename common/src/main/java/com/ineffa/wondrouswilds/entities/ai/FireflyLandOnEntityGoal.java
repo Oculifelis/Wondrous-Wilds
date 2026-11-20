@@ -19,7 +19,7 @@ public class FireflyLandOnEntityGoal extends Goal {
 
     private LivingEntity entityToLandOn;
 
-    private final TargetingConditions LAND_ON_PREDICATE = TargetingConditions.forNonCombat().range(8.0D).selector(this::canEntityBeLandedOn);
+    private final TargetingConditions LAND_ON_PREDICATE = TargetingConditions.forNonCombat().range(8.0D).selector((entity, level) -> this.canEntityBeLandedOn(entity));
 
     public FireflyLandOnEntityGoal(FireflyEntity firefly, Class<? extends LivingEntity> classToTarget) {
         this.firefly = firefly;
@@ -73,7 +73,7 @@ public class FireflyLandOnEntityGoal extends Goal {
     }
 
     private boolean findEntityToLandOn() {
-        return (this.entityToLandOn = this.world.getNearestEntity(this.classToTarget, LAND_ON_PREDICATE, this.firefly, this.firefly.getX(), this.firefly.getY(), this.firefly.getZ(), this.firefly.getBoundingBox().inflate(8.0D))) != null;
+        return (this.entityToLandOn = getServerLevel(this.firefly).getNearestEntity(this.classToTarget, LAND_ON_PREDICATE, this.firefly, this.firefly.getX(), this.firefly.getY(), this.firefly.getZ(), this.firefly.getBoundingBox().inflate(8.0D))) != null;
     }
 
     private boolean canEntityBeLandedOn(LivingEntity entity) {

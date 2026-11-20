@@ -3,7 +3,8 @@ package com.ineffa.wondrouswilds.entities;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import com.ineffa.wondrouswilds.entities.ai.BetterFlyNavigation;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -35,7 +36,7 @@ public abstract class FlyingAndWalkingAnimalEntity extends Animal implements Fly
 
         BetterFlyNavigation flyNavigation = new BetterFlyNavigation(this, world);
         flyNavigation.setCanOpenDoors(false);
-        flyNavigation.setCanPassDoors(true);
+        flyNavigation.getNodeEvaluator().setCanPassDoors(true);
         flyNavigation.setCanFloat(false);
         this.flyNavigation = flyNavigation;
         this.landNavigation = new GroundPathNavigation(this, world);
@@ -49,7 +50,7 @@ public abstract class FlyingAndWalkingAnimalEntity extends Animal implements Fly
         if (this.isInFlight()) {
             BetterFlyNavigation flyNavigation = new BetterFlyNavigation(this, world);
             flyNavigation.setCanOpenDoors(false);
-            flyNavigation.setCanPassDoors(true);
+            flyNavigation.getNodeEvaluator().setCanPassDoors(true);
             flyNavigation.setCanFloat(false);
 
             return flyNavigation;
@@ -73,7 +74,7 @@ public abstract class FlyingAndWalkingAnimalEntity extends Animal implements Fly
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
 
         nbt.putBoolean(IS_FLYING_KEY, this.isInFlight());
@@ -81,13 +82,13 @@ public abstract class FlyingAndWalkingAnimalEntity extends Animal implements Fly
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
 
-        boolean isFlying = nbt.getBoolean(IS_FLYING_KEY);
+        boolean isFlying = nbt.getBooleanOr(IS_FLYING_KEY, false);
         if (this.isInFlight() != isFlying) this.setFlying(isFlying);
 
-        this.setWantsToLand(nbt.getBoolean(WANTS_TO_LAND_KEY));
+        this.setWantsToLand(nbt.getBooleanOr(WANTS_TO_LAND_KEY, false));
     }
 
     public boolean isInFlight() {

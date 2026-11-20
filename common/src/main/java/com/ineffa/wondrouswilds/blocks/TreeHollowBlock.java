@@ -3,12 +3,15 @@ package com.ineffa.wondrouswilds.blocks;
 import com.ineffa.wondrouswilds.blocks.entity.TreeHollowBlockEntity;
 import com.ineffa.wondrouswilds.registry.WondrousWildsBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -44,13 +47,12 @@ public class TreeHollowBlock extends InhabitableNestBlock {
 
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide() && player.isCreative() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && world.getBlockEntity(pos) instanceof TreeHollowBlockEntity treeHollow) {
+        if (!world.isClientSide() && player.isCreative() && world instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.BLOCK_DROPS) && world.getBlockEntity(pos) instanceof TreeHollowBlockEntity treeHollow) {
             ItemStack itemStack = new ItemStack(this);
             if (treeHollow.hasInhabitants()) {
-                CompoundTag nbtCompound = new CompoundTag();
-
-                nbtCompound.put(TreeHollowBlockEntity.INHABITANTS_KEY, treeHollow.getInhabitantsNbt());
-                BlockItem.setBlockEntityData(itemStack, WondrousWildsBlocks.BlockEntities.TREE_HOLLOW, nbtCompound);
+                TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, world.registryAccess());
+                treeHollow.writeInhabitants(output);
+                BlockItem.setBlockEntityData(itemStack, WondrousWildsBlocks.BlockEntities.TREE_HOLLOW, output);
 
                 // 1.21: the original also copied this tag into BlockStateTag, which held no block properties and did nothing. Item block state is a property map now, so that copy is gone.
 
@@ -69,7 +71,7 @@ public class TreeHollowBlock extends InhabitableNestBlock {
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
 
         if (blockEntity instanceof TreeHollowBlockEntity treeHollow && treeHollow.hasInhabitants()) return 15;

@@ -18,7 +18,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.minecraft.core.Registry;
@@ -46,7 +45,7 @@ public class WondrousWildsFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(WondrousWildsPayload.TYPE, WondrousWildsPayload.CODEC);
 
         for (WondrousWildsRegistration.Entry entry : WondrousWildsRegistration.entries()) {
-            Registry registry = BuiltInRegistries.REGISTRY.get(entry.registry().location());
+            Registry registry = BuiltInRegistries.REGISTRY.get(entry.registry().identifier());
             Registry.register(registry, entry.id(), entry.value());
         }
 
@@ -61,10 +60,6 @@ public class WondrousWildsFabric implements ModInitializer {
 
         WondrousWildsBlocks.HOLLOW_STRIPPABLES.forEach(StrippableBlockRegistry::register);
 
-        if (!WondrousWildsItems.Trades.COMMON_WANDERER_TRADES.isEmpty())
-            TradeOfferHelper.registerWanderingTraderOffers(1, factories -> factories.addAll(WondrousWildsItems.Trades.COMMON_WANDERER_TRADES));
-        if (!WondrousWildsItems.Trades.RARE_WANDERER_TRADES.isEmpty())
-            TradeOfferHelper.registerWanderingTraderOffers(2, factories -> factories.addAll(WondrousWildsItems.Trades.RARE_WANDERER_TRADES));
 
         upgradeBirchForests();
 
@@ -99,7 +94,7 @@ public class WondrousWildsFabric implements ModInitializer {
 
             context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WondrousWildsFeatures.LILY_OF_THE_VALLEY_PATCH_PLACED);
 
-            context.getSpawnSettings().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.FOX, 6, 2, 4));
+            context.getMobSpawnSettings().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.FOX, 2, 4), 6);
         });
 
         birchForestModifier.add(ModificationPhase.REPLACEMENTS, BIRCH_FOREST, context -> {
@@ -111,7 +106,7 @@ public class WondrousWildsFabric implements ModInitializer {
             context.getGenerationSettings().removeFeature(VegetationPlacements.BIRCH_TALL);
             context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WondrousWildsFeatures.Trees.OLD_GROWTH_BIRCH_FOREST_TREES_PLACED);
 
-            context.getEffects().setGrassColor(12232267);
+            context.getEffects().setGrassColorOverride(12232267);
         });
     }
 }

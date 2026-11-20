@@ -8,7 +8,7 @@ import com.ineffa.wondrouswilds.registry.WondrousWildsFeatures;
 import com.mojang.serialization.Codec;
 import java.util.*;
 import java.util.stream.Collectors;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;

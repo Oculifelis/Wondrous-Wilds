@@ -1,0 +1,11 @@
+{
+  "gives": {
+    "id": "wondrouswilds:big_polypore"
+  },
+  "max_uses": 8.0,
+  "reputation_discount": 1.0,
+  "wants": {
+    "id": "minecraft:emerald"
+  },
+  "xp": 1
+}

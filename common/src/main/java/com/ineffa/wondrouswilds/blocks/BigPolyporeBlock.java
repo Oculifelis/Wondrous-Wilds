@@ -23,12 +23,8 @@ public class BigPolyporeBlock extends LadderBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return switch (state.getValue(FACING)) {
-            default -> NORTH_AABB;
-            case SOUTH -> SOUTH_AABB;
-            case EAST -> EAST_AABB;
-            case WEST -> WEST_AABB;
-        };
+        // Quirk kept: the original returned the ladder's shapes, never the boxes above.
+        return SHAPES.get(state.getValue(FACING));
     }
 
     @SuppressWarnings("deprecation")

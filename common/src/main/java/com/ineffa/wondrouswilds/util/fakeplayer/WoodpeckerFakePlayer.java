@@ -2,6 +2,7 @@ package com.ineffa.wondrouswilds.util.fakeplayer;
 
 import com.ineffa.wondrouswilds.entities.WoodpeckerEntity;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -40,7 +41,9 @@ public class WoodpeckerFakePlayer extends FakePlayerEntity {
     public void setItemInHand(InteractionHand hand, ItemStack stack) {
         if (hand == InteractionHand.MAIN_HAND) this.woodpecker.setItemSlot(EquipmentSlot.MAINHAND, stack);
 
-        else if (hand == InteractionHand.OFF_HAND) this.woodpecker.spawnAtLocation(stack);
+        else if (hand == InteractionHand.OFF_HAND) {
+            if (this.woodpecker.level() instanceof ServerLevel serverLevel) this.woodpecker.spawnAtLocation(serverLevel, stack);
+        }
 
         else super.setItemInHand(hand, stack);
     }
@@ -52,14 +55,14 @@ public class WoodpeckerFakePlayer extends FakePlayerEntity {
 
     @Nullable
     @Override
-    public ItemEntity spawnAtLocation(ItemStack stack) {
-        return this.woodpecker.spawnAtLocation(stack);
+    public ItemEntity spawnAtLocation(ServerLevel level, ItemStack stack) {
+        return this.woodpecker.spawnAtLocation(level, stack);
     }
 
     @Nullable
     @Override
-    public ItemEntity spawnAtLocation(ItemStack stack, float yOffset) {
-        return this.woodpecker.spawnAtLocation(stack, yOffset);
+    public ItemEntity spawnAtLocation(ServerLevel level, ItemStack stack, float yOffset) {
+        return this.woodpecker.spawnAtLocation(level, stack, yOffset);
     }
 
     @Nullable
@@ -90,7 +93,7 @@ public class WoodpeckerFakePlayer extends FakePlayerEntity {
             itemEntity.setDeltaMovement((double) (-i * h * f) + Math.cos(k) * (double) l, -g * f + 0.1F + (this.woodpecker.getRandom().nextFloat() - this.woodpecker.getRandom().nextFloat()) * 0.1F, (double) (j * h * f) + Math.sin(k) * (double) l);
         }
 
-        this.woodpecker.getCommandSenderWorld().addFreshEntity(itemEntity);
+        this.woodpecker.level().addFreshEntity(itemEntity);
         return itemEntity;
     }
 

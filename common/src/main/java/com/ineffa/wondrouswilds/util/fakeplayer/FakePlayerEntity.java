@@ -4,13 +4,15 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 public class FakePlayerEntity extends Player {
 
     public FakePlayerEntity(Level world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+        super(world, gameProfile);
+        this.snapTo(pos, yaw, 0.0F);
     }
 
     @Override
@@ -52,6 +54,11 @@ public class FakePlayerEntity extends Player {
 
     @Override
     public void checkBelowWorld() {}
+
+    @Override
+    public GameType gameMode() {
+        return GameType.SURVIVAL;
+    }
 
     @Override
     public boolean isSpectator() {
