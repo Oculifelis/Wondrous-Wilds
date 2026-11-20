@@ -41,7 +41,7 @@ repositories {
     maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content { includeGroupAndSubgroups('software.bernie') }
+        content { includeGroupAndSubgroups('software.bernie'); includeGroup('com.eliotlash.mclib') }
     }
     maven {
         name = 'Shedaniel'
