@@ -7,9 +7,7 @@
     " # "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:stripped_warped_stem"
-    }
+    "#": "minecraft:stripped_warped_stem"
   },
   "result": {
     "id": "wondrouswilds:hollow_stripped_warped_stem",

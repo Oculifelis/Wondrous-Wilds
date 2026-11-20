@@ -7,12 +7,8 @@
     "LLL"
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:hollow_spruce_log"
-    },
-    "W": {
-      "item": "minecraft:wither_rose"
-    }
+    "L": "wondrouswilds:hollow_spruce_log",
+    "W": "minecraft:wither_rose"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_spruce_log",

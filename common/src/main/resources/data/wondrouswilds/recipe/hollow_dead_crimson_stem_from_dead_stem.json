@@ -7,9 +7,7 @@
     " L "
   ],
   "key": {
-    "L": {
-      "item": "wondrouswilds:dead_crimson_stem"
-    }
+    "L": "wondrouswilds:dead_crimson_stem"
   },
   "result": {
     "id": "wondrouswilds:hollow_dead_crimson_stem",
