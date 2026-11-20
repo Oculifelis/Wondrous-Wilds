@@ -172,7 +172,7 @@ public class WondrousWildsItems {
         public static void addWandererTrade(boolean rare, int maxUses, ItemLike itemToSell, int amountToSell, ItemLike firstItemToBuy, int firstItemToBuyCost, ItemLike secondItemToBuy, int secondItemToBuyCost) {
             List<VillagerTrades.ItemListing> listToAddTo = rare ? RARE_WANDERER_TRADES : COMMON_WANDERER_TRADES;
 
-            listToAddTo.add((entity, random) -> new MerchantOffer(new net.minecraft.world.item.trading.ItemCost(firstItemToBuy, firstItemToBuyCost), java.util.Optional.of(new net.minecraft.world.item.trading.ItemCost(secondItemToBuy, secondItemToBuyCost)), new ItemStack(itemToSell, amountToSell), maxUses, 1, 1.0F));
+            listToAddTo.add((entity, random) -> new MerchantOffer(new net.minecraft.world.item.trading.ItemCost(firstItemToBuy, firstItemToBuyCost), (secondItemToBuy == null ? java.util.Optional.empty() : java.util.Optional.of(new net.minecraft.world.item.trading.ItemCost(secondItemToBuy, secondItemToBuyCost))), new ItemStack(itemToSell, amountToSell), maxUses, 1, 1.0F));
         }
 
         // Each loader adds these lists to the wandering trader (Fabric: TradeOfferHelper level 1 / 2, Forge: WandererTradesEvent).
