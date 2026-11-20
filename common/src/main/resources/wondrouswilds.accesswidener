@@ -5,3 +5,8 @@ accessible	method	net/minecraft/world/entity/SpawnPlacements	register	(Lnet/mine
 accessible	method	net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacerType	<init>	(Lcom/mojang/serialization/MapCodec;)V
 accessible	method	net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacerType	<init>	(Lcom/mojang/serialization/MapCodec;)V
 accessible	method	net/minecraft/world/level/levelgen/feature/treedecorators/TreeDecoratorType	<init>	(Lcom/mojang/serialization/MapCodec;)V
+accessible	class	net/minecraft/world/inventory/MenuType$MenuSupplier
+accessible	method	net/minecraft/world/inventory/MenuType	<init>	(Lnet/minecraft/world/inventory/MenuType$MenuSupplier;Lnet/minecraft/world/flag/FeatureFlagSet;)V
+accessible	class	net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
+accessible	method	net/minecraft/world/level/block/entity/BlockEntityType	<init>	(Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;Ljava/util/Set;)V
+accessible	class	net/minecraft/world/item/CreativeModeTab$Output

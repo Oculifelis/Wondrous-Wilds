@@ -42,10 +42,10 @@ public class WondrousWildsFabric implements ModInitializer {
     public void onInitialize() {
         WondrousWilds.init();
 
-        PayloadTypeRegistry.playS2C().register(WondrousWildsPayload.TYPE, WondrousWildsPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(WondrousWildsPayload.TYPE, WondrousWildsPayload.CODEC);
 
         for (WondrousWildsRegistration.Entry entry : WondrousWildsRegistration.entries()) {
-            Registry registry = BuiltInRegistries.REGISTRY.get(entry.registry().identifier());
+            Registry registry = BuiltInRegistries.REGISTRY.getValue(entry.registry().identifier());
             Registry.register(registry, entry.id(), entry.value());
         }
 
