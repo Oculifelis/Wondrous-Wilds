@@ -11,8 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class FireflyModel extends GeoModel<FireflyEntity> {
     private static final Identifier TEXTURE = WondrousWilds.id("textures/entity/firefly/firefly.png");
-    private static final Identifier MODEL = WondrousWilds.id("geo/firefly.geo.json");
-    private static final Identifier ANIMATION = WondrousWilds.id("animations/firefly.animation.json");
+    private static final Identifier MODEL = WondrousWilds.id("firefly");
+    private static final Identifier ANIMATION = WondrousWilds.id("firefly");
 
     static {
         // Molang actor variables are global, so other entities keep the stock limb swing values.

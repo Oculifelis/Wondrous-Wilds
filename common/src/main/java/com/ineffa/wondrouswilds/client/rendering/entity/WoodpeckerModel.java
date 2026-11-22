@@ -9,9 +9,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class WoodpeckerModel extends GeoModel<WoodpeckerEntity> {
-    private static final Identifier MODEL = WondrousWilds.id("geo/woodpecker.geo.json");
+    private static final Identifier MODEL = WondrousWilds.id("woodpecker");
     private static final Identifier TEXTURE = WondrousWilds.id("textures/entity/woodpecker.png");
-    private static final Identifier ANIMATION = WondrousWilds.id("animations/woodpecker.animation.json");
+    private static final Identifier ANIMATION = WondrousWilds.id("woodpecker");
 
     static {
         MolangQueries.<Object>setActorVariable("query.head_pitch", actor -> actor.animatable() instanceof WoodpeckerEntity entity
