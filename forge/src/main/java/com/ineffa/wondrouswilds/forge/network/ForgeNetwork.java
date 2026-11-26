@@ -1,11 +1,13 @@
 package com.ineffa.wondrouswilds.forge.network;
 
+import com.ineffa.wondrouswilds.client.network.ClientPacketHandlers;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.networking.WondrousWildsNetwork;
 import com.ineffa.wondrouswilds.platform.IPlatformHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -56,8 +58,9 @@ public final class ForgeNetwork {
         }
 
         void handle(Supplier<NetworkEvent.Context> context) {
-            // The common handler queues its own work on the client thread.
-            WondrousWildsNetwork.handleClient(WondrousWildsNetwork.S2C_PACKETS.get(this.index), new FriendlyByteBuf(Unpooled.wrappedBuffer(this.payload)));
+            // The client handler queues its own work on the client thread; it is never loaded on a server.
+            if (FMLEnvironment.dist.isClient())
+                ClientPacketHandlers.handle(WondrousWildsNetwork.S2C_PACKETS.get(this.index), new FriendlyByteBuf(Unpooled.wrappedBuffer(this.payload)));
             context.get().setPacketHandled(true);
         }
     }
