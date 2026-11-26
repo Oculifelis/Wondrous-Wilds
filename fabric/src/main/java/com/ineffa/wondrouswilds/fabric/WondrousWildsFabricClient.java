@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.fabric;
 
+import com.ineffa.wondrouswilds.client.network.ClientPacketHandlers;
 import com.ineffa.wondrouswilds.client.rendering.WondrousWildsColorProviders;
 import com.ineffa.wondrouswilds.client.rendering.entity.FireflyRenderer;
 import com.ineffa.wondrouswilds.client.rendering.entity.WoodpeckerRenderer;
@@ -26,6 +27,6 @@ public class WondrousWildsFabricClient implements ClientModInitializer {
 
         MenuScreens.register(WondrousWildsScreenHandlers.NEST_BOX, NestBoxScreen::new);
 
-        ClientPlayNetworking.registerGlobalReceiver(WondrousWildsPayload.TYPE, (payload, context) -> payload.handleClient());
+        ClientPlayNetworking.registerGlobalReceiver(WondrousWildsPayload.TYPE, (payload, context) -> ClientPacketHandlers.handle(payload.packetId(), payload.buffer()));
     }
 }
