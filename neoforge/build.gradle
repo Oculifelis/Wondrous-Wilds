@@ -24,6 +24,11 @@ neoForge {
                 systemProperty('porttest.mod', mod_id)
                 programArguments.addAll('--quickPlaySingleplayer', 'wwtest')
             }
+            if (project.hasProperty('hiddenJoin')) {
+                systemProperty('hidekit.probe', mod_id)
+                systemProperty('porttest.mod', mod_id)
+                programArguments.addAll('--quickPlayMultiplayer', project.property('hiddenJoin').toString())
+            }
         }
         server {
             server()

@@ -28,6 +28,11 @@ loom {
                 vmArg("-Dporttest.mod=${mod_id}")
                 programArgs('--quickPlaySingleplayer', 'wwtest')
             }
+            if (project.hasProperty('hiddenJoin')) {
+                vmArg("-Dhidekit.probe=${mod_id}")
+                vmArg("-Dporttest.mod=${mod_id}")
+                programArgs('--quickPlayMultiplayer', project.property('hiddenJoin').toString())
+            }
         }
         server {
             server()
