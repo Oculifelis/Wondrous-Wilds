@@ -30,9 +30,14 @@ public record WondrousWildsPayload(int index, byte[] payload) implements CustomP
         return new WondrousWildsPayload(index, bytes);
     }
 
-    /** Client side only. The common handler queues its own work on the client thread. */
-    public void handleClient() {
-        WondrousWildsNetwork.handleClient(WondrousWildsNetwork.S2C_PACKETS.get(this.index), new FriendlyByteBuf(Unpooled.wrappedBuffer(this.payload)));
+    /** The packet's name in S2C_PACKETS. */
+    public String packetId() {
+        return WondrousWildsNetwork.S2C_PACKETS.get(this.index);
+    }
+
+    /** A fresh buffer over the packet's bytes. */
+    public FriendlyByteBuf buffer() {
+        return new FriendlyByteBuf(Unpooled.wrappedBuffer(this.payload));
     }
 
     @Override
