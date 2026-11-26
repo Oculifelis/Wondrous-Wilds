@@ -1,5 +1,6 @@
 package com.ineffa.wondrouswilds.neoforge;
 
+import com.ineffa.wondrouswilds.client.network.ClientPacketHandlers;
 import com.ineffa.wondrouswilds.WondrousWilds;
 import com.ineffa.wondrouswilds.config.WondrousWildsConfig;
 import com.ineffa.wondrouswilds.entities.FireflyEntity;
@@ -81,7 +82,10 @@ public class WondrousWildsNeoForge {
     }
 
     private void onPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar("1").playToClient(WondrousWildsPayload.TYPE, WondrousWildsPayload.CODEC, (payload, context) -> payload.handleClient());
+        event.registrar("1").playToClient(WondrousWildsPayload.TYPE, WondrousWildsPayload.CODEC, (payload, context) -> {
+            // playToClient handlers only run on the client, so the client-only class is never loaded on a server.
+            ClientPacketHandlers.handle(payload.packetId(), payload.buffer());
+        });
     }
 
     private void onEntityJoin(EntityJoinLevelEvent event) {
